@@ -1,9 +1,9 @@
 //Procedures and functions used to initialise UART, transmit, and receive over UART.
-#ifndef UART_DRIVER
-#define UART_DRIVER
+#ifndef UART_DRIVER_H
+#define UART_DRIVER_H
 
 //Initialises UART communication.
-//Takes in a given UBRR value. (UART baud rate)
+//Takes in a given UBRR value. (UART Baud Rate Register)
 void uart_init(unsigned int ubbr);
 
 //Transmits one character over UART
