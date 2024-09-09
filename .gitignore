@@ -54,3 +54,8 @@ dkms.conf
 # Added by user
 
 */build/
+
+# Ignore vim temporary files:
+*~
+*.swp
+*.swo
