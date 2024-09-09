@@ -11,10 +11,11 @@ void main()
 {
 		uart_init(MYUBRR);
 		unsigned char letter = 0x41;
+		_delay_ms(10);
 		while (1)
 		{
 				letter = uart_read();
 				uart_transmit(letter);
-				_delay_ms(10);
+				_delay_ms(100);
 		}
 }
