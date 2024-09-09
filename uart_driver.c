@@ -1,4 +1,4 @@
-//Mostly stolen from the datasheet for now. WIP
+//NOTE: Code is heavily inspired by code found in the Atmega162 datasheet.
 #include <avr/io.h>
 #include <avr/common.h>
 #include "uart_driver.h"
