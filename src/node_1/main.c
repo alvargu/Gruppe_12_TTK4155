@@ -1,5 +1,6 @@
 #include <avr/io.h>
 #include "lib/uart_com.h"
+#include <stdio.h>
 
 #define F_CPU 4915200 //Clock Speed
 #include <util/delay.h>
@@ -10,12 +11,15 @@
 void main()
 {
 		uart_init(MYUBRR);
-		unsigned char letter = 0x41;
-		_delay_ms(10);
+		unsigned char letter;
+
+		char message[] = "Hei!!!";
+		printf("%s",message);
+
 		while (1)
 		{
-				letter = uart_read();
-				uart_transmit(letter);
-				_delay_ms(100);
+				scanf("%c",&letter);
+				printf("%c",letter);
+				_delay_ms(10);
 		}
 }
