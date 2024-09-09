@@ -1,6 +1,6 @@
 //Procedures and functions used to initialise UART, transmit, and receive over UART.
-#ifndef UART_DRIVER_H
-#define UART_DRIVER_H
+#ifndef UART_COM_H
+#define UART_COM_H
 
 //Initialises UART communication.
 //Takes in a given UBRR value. (UART Baud Rate Register)
