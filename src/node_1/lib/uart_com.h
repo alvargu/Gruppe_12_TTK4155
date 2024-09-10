@@ -1,10 +1,15 @@
-#pragma			once
-#include		<avr/io.h>
+//Procedures and functions used to initialise UART, transmit, and receive over UART.
+#ifndef UART_COM_H
+#define UART_COM_H
 
-#define			FOSC	4915200
-#define			BAUD	9600
-#define			MYUBRR	FOSC/16/BAUD-1
+//Initialises UART communication.
+//Takes in a given UBRR value. (UART Baud Rate Register)
+void uart_init(unsigned int ubbr);
 
-uint8_t			UART_READ(void);
-void			UART_TRANSMIT(unsigned char);
-void			UART_INIT(unsigned int);
+//Transmits one character over UART
+//Takes in the character to transmit
+void uart_transmit(unsigned char data);
+
+//Recieves one character from UART
+unsigned char uart_read(void);
+#endif
