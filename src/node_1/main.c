@@ -1,6 +1,8 @@
 #include <avr/io.h>
 #include "lib/uart_com.h"
 #include <stdio.h>
+#include <stdlib.h>
+#include "lib/ADC_Driver.h"
 
 #define F_CPU 4915200 //Clock Speed
 #include <util/delay.h>
@@ -11,15 +13,16 @@
 void main()
 {
 		uart_init(MYUBRR);
-		unsigned char letter;
+		adc_init();
 
-		char message[] = "Hei!!!";
-		printf("%s",message);
+		//Setup for using external memory space
+		MCUCR |= (0x1 << SRE);
+		SFIOR |= (0x1 << XMM2);
+		printf("\033[2j");
 
 		while (1)
 		{
-				scanf("%c",&letter);
-				printf("%c",letter);
+				adc_test();
 				_delay_ms(10);
 		}
 }
