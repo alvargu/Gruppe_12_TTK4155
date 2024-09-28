@@ -54,6 +54,7 @@ dkms.conf
 # Added by user
 
 */build/
+*.vscode/*
 
 # Ignore vim temporary files:
 *~
