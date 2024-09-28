@@ -39,7 +39,7 @@ void adc_test()
 }
 
 //Samples current values from the ADC
-void adc_sample(raw_adc_data_t* adc_inputs) //Untested as of now
+void adc_sample(raw_adc_data_t* adc_inputs) 
 {
 		volatile char *adc_start_address = (char *) 0x1400; //0x1400 is the first adress in the adress space.
 		adc_start_address[0] = 0x00; //Write any value just to send write signal to ADC.
