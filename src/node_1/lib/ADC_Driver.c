@@ -35,7 +35,7 @@ void adc_test()
 		adc_inputs.slider_right = adc_start_address[0];
 
 		printf("\r");
-		printf("x : %8d | y: %8d || left: %8d | right: %8d", inputs.joystick_x, inputs.joystick_y, inputs.slider_right, inputs.slider_left);
+		printf("x : %8d | y: %8d || left: %8d | right: %8d", adc_inputs.joystick_x, adc_inputs.joystick_y, adc_inputs.slider_right, adc_inputs.slider_left);
 }
 
 //Samples current values from the ADC
