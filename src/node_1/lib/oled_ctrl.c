@@ -1,0 +1,24 @@
+#include "oled_ctrl.h"
+
+void oled_init()
+{
+    //TODO:
+    //INIT CLOCK
+    //CLOCK PRESCALER 2
+    //MAX VAL TO COUNT TO IS 40,960 = 1/60
+    //ENBALE INTERRUPT ON MATCH/OVERFLOW
+    
+
+    //ENABLE GLOBAL INTERRUPT
+    sei();
+}
+
+//TODO:
+//IMPLEMENT INTERRUPT
+//BASIC ISR - LEAVE FOR LATER
+//MAKE NOTES WHAT TO ADD
+
+ISR()
+{
+
+}
