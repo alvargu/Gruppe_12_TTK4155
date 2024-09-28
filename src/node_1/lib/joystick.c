@@ -7,7 +7,7 @@
 #define F_CPU 4915200 //Clock Speed
 #include <util/delay.h>
 
-static raw_adc_data_t calibration_data = {0u, 0u, 0u, 0u};
+static raw_adc_data_t calibration_data = {0u, 0u, 0u, 0u}; //Stores the calibration data that the other functions use
 
 //Initialises joystick (runs calibration)
 void joystick_init_calibration(void)
@@ -32,14 +32,11 @@ void joystick_init_calibration(void)
 
 		calibration_data.joystick_x = (uint8_t) (x_joystick_sum / 50u);
 		calibration_data.joystick_y = (uint8_t) (y_joystick_sum / 50u);
-
-		printf("Calibration done\n\r");
-		printf("Found center value X: %8d\n\r", calibration_data.joystick_x);
-		printf("Found center value Y: %8d\n\r", calibration_data.joystick_y);
 }
 
 //Calculates the calibrated angle (in percent) for a given joystick readout and calibration value.
 static int8_t calculate_calibration(uint8_t readout, uint8_t calibration_value)
+//Calibrates differently for above and below the "zero value".
 {
 		int8_t return_val;
 		if (readout == calibration_value)
@@ -66,4 +63,35 @@ void joystick_get_angle(joystick_angle_t *output_p, const raw_adc_data_t *adc_re
 		output_p -> y_angle = calculate_calibration(adc_readout_p -> joystick_y, calibration_data.joystick_y);
 }
 
+
+#define X_READ ((adc_readout_p -> joystick_x))
+#define Y_READ ((adc_readout_p -> joystick_y))
+#define X_0 ((calibration_data.joystick_x))
+#define Y_0 ((calibration_data.joystick_y))
+
+//Returns the enumerated direction of the joystick, 
+//based on the data in adc_readout_p
+joystick_direction_t joystick_get_direction(const raw_adc_data_t *adc_readout_p)
+{
+		joystick_direction_t joystick_state = neutral;
+
+		if ((Y_READ > Y_0 + 15u) && (Y_READ > (X_READ + 1u)) && (Y_READ > (X_0 - X_READ + 1u)))
+		{
+				joystick_state = up;
+		}
+		else if ((X_READ > X_0 + 15u) && (X_READ > (Y_READ + 1u)) && (X_READ > (Y_0 - Y_READ + 1u)))
+		{
+				joystick_state = right;
+		}
+		else if ((Y_READ < Y_0 - 15u) && (Y_READ < (X_READ - 1u)) && (Y_READ < (X_0 - X_READ - 1u)))
+		{
+				joystick_state = down;
+		}
+		else if ((X_READ < X_0 - 15u) && (X_READ < (Y_READ - 1u)) && (X_READ < (Y_0 - Y_READ - 1u)))
+		{
+				joystick_state = left;
+		}
+
+		return joystick_state;
+}
 

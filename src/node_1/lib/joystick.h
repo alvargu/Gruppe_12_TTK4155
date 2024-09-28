@@ -20,7 +20,7 @@ typedef enum
 		up,
 		down,
 		neutral
-} joystick_direction;
+} joystick_direction_t;
 
 //Initialises joystick (runs calibration)
 void joystick_init_calibration(void);
@@ -31,6 +31,6 @@ void joystick_get_angle(joystick_angle_t *input_p, const raw_adc_data_t *adc_red
 
 //Returns the enumerated direction of the joystick, 
 //based on the data in adc_readout_p
-joystick_direction joystick_get_direction(const raw_adc_data_t*);
+joystick_direction_t joystick_get_direction(const raw_adc_data_t*);
 
 #endif
