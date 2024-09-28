@@ -20,11 +20,11 @@ typedef enum
 } joystick_direction;
 
 //Initialises joystick (runs calibration)
-void joystick_init(void);
+void joystick_init_calibration(void);
 
 //Gets the calibrated angle of the joystick
 void joystick_get_angle(joystick_angle_t*, raw_adc_data_t*);
 
-//Gets the direction of the joystick.
+//Gets the direction of the joystick. 
 joystick_direction joystick_get_direction(raw_adc_data_t*);
 
