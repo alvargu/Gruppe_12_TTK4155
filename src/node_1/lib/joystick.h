@@ -25,10 +25,12 @@ typedef enum
 //Initialises joystick (runs calibration)
 void joystick_init_calibration(void);
 
-//Gets the calibrated angle of the joystick
-void joystick_get_angle(joystick_angle_t*, raw_adc_data_t*);
+//Puts the calibrated angle of the joystick in the variable pointed to
+//by output_p, based on the data in adc_readout_p
+void joystick_get_angle(joystick_angle_t *input_p, const raw_adc_data_t *adc_redout_p);
 
-//Gets the direction of the joystick. 
-joystick_direction joystick_get_direction(raw_adc_data_t*);
+//Returns the enumerated direction of the joystick, 
+//based on the data in adc_readout_p
+joystick_direction joystick_get_direction(const raw_adc_data_t*);
 
 #endif
