@@ -1,13 +1,18 @@
 #include "oled_ctrl.h"
 
-void oled_init()
+void 
+oled_init()
 {
     //TODO:
-    //INIT CLOCK
-    //CLOCK PRESCALER 2
-    //MAX VAL TO COUNT TO IS 40,960 = 1/60
+	
+    //INIT CLOCK AND SET PRESCALER TO 8
+	TCCR1B = CS11; 
+
+    //MAX VAL TO COUNT TO IS 10,240 = 1/60
+	TCNT1 = TIMER_VAL;
+	
     //ENBALE INTERRUPT ON MATCH/OVERFLOW
-    
+    TIMSK = OCIE1B;
 
     //ENABLE GLOBAL INTERRUPT
     sei();
@@ -17,8 +22,6 @@ void oled_init()
 //IMPLEMENT INTERRUPT
 //BASIC ISR - LEAVE FOR LATER
 //MAKE NOTES WHAT TO ADD
-
-ISR()
-{
-
+ISR(OCF1B){
+	
 }

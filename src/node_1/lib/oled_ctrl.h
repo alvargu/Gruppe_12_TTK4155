@@ -5,7 +5,8 @@
 #include <avr/interrupt.h>
 #include <inttypes.h>
 
-#define TIMER_VAL 40960
+#define TIMER_VAL	10240
+#define F_CPU		4915200
 
 void oled_init();
 
