@@ -50,16 +50,44 @@ oled_init()
 }
 
 void
-oled_printf(uint8_t* oled_string)
-{
-
-}
-
-void
 oled_clear()
 {
     //Clear Display
 	for(int i = 0; i < 1024; i++){
 		write_data(0x00);
 	}
+}
+
+//Function used to move the cursor to the top left corner
+void
+oled_home()
+{
+	write_command(0xB0);
+	write_command(0x00);
+	write_command(0x10);
+	write_data(0xff);
+}
+
+void
+oled_goto_line(uint8_t line)
+{
+
+}
+
+void
+oled_goto_column(uint8_t line)
+{
+
+}
+
+void 
+oled_clear_line(uint8_t)
+{
+
+}
+
+void 
+oled_clear_column(uint8_t)
+{
+
 }

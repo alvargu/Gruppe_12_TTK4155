@@ -5,11 +5,28 @@
 #include <avr/interrupt.h>
 #include <inttypes.h>
 
+#include "xmem.h"
+
 #define TIMER_VAL	10240
 #define F_CPU		4915200
 
 void oled_init();
 void oled_clear();
-void oled_printf(uint8_t*);
+
+//TODO: Working on
+
+//Move OLED "Cursor"
+void oled_home();
+void oled_pos(uint8_t, uint8_t);
+void oled_goto_line(uint8_t);
+void oled_goto_column(uint8_t);
+
+//TODO:
+//Clear OLED display
+void oled_clear_line(uint8_t);
+void oled_clear_column(uint8_t);
+
+//Print a char to the display
+void oled_print_char(char*);
 
 #endif
