@@ -1,5 +1,6 @@
 #include <avr/io.h>
 #include "lib/uart_com.h"
+#include "lib/sram.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include "lib/ADC_Driver.h"
