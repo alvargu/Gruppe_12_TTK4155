@@ -6,7 +6,7 @@ xmem_init()
 	MCUCR = 0b10000000;
 	SFIOR = (1 << XMM2);
 
-	volatile char* ext_ram = (char*) XMEM_MEM;
+	volatile char* ext_ram = (char*) XMEM_SRAM_MEM;
 	uint16_t ext_ram_size = 0x800;
 	uint16_t write_error = 0; 
 	uint16_t retrival_errors = 0;
@@ -41,13 +41,13 @@ xmem_init()
 void 
 xmem_write(uint16_t mem_loc, uint8_t adrr, uint8_t val)
 {	
-	volatile char* ext_ram = (char*) mem_loc;
-	ext_ram[adrr] = (char*)val;
+	volatile uint8_t* ext_ram = (uint8_t*) mem_loc;
+	ext_ram[adrr] = val;
 }
 
 uint8_t 
 xmem_read(uint16_t mem_loc,uint8_t adrr)
 {
-	volatile char* ext_ram = (char*) mem_loc;
-	return ext_ram[adrr];;
+	volatile uint8_t* ext_ram = (uint8_t*) mem_loc;
+	return ext_ram[adrr];
 }
