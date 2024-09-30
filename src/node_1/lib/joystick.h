@@ -27,7 +27,7 @@ void joystick_init_calibration(void);
 
 //Puts the calibrated angle of the joystick in the variable pointed to
 //by output_p, based on the data in adc_readout_p
-void joystick_get_angle(joystick_angle_t *input_p, const raw_adc_data_t *adc_redout_p);
+void joystick_get_angle(joystick_angle_t *input_p, const raw_adc_data_t *adc_readout_p);
 
 //Returns the enumerated direction of the joystick, 
 //based on the data in adc_readout_p
