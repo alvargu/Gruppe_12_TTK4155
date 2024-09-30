@@ -9,5 +9,6 @@
 #define F_CPU		4915200
 
 void oled_init();
+void oled_printf(uint8_t*);
 
 #endif
