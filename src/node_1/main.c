@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "lib/ADC_Driver.h"
+#include "lib/joystick.h"
 
 #define F_CPU 4915200 //Clock Speed
 #include <util/delay.h>
@@ -14,16 +15,22 @@
 void main()
 {
 		uart_init(MYUBRR);
+		xmem_init();
 		adc_init();
+		joystick_init_calibration();
 
-		//Setup for using external memory space
-		MCUCR |= (0x1 << SRE);
-		SFIOR |= (0x1 << XMM2);
-		printf("\033[2j");
+		//Clear screen:
+		printf("%c%c%c%c",0x1B,0x5B,0x32,0x4A);
 
+		joystick_angle_t current_angle = {0, 0};
+		raw_adc_data_t adc_readout = {0u, 0u, 0u, 0u};
+		
 		while (1)
 		{
-				adc_test();
-				_delay_ms(10);
+				printf("\r");
+				adc_sample(&adc_readout);
+				joystick_get_angle(&current_angle, &adc_readout);
+
+				printf("X angle: %4d | Y angle: %4d", current_angle.x_angle, current_angle.y_angle);
 		}
 }
