@@ -7,8 +7,8 @@
 
 #include "xmem.h"
 
-#define TIMER_VAL	10240
-#define F_CPU		4915200
+#define OLED_WIDTH      128
+#define OLED_LINE_CNT   8
 
 void oled_init();
 void oled_clear();
@@ -21,7 +21,6 @@ void oled_pos(uint8_t, uint8_t);
 void oled_goto_line(uint8_t);
 void oled_goto_column(uint8_t);
 
-//TODO:
 //Clear OLED display
 void oled_clear_line(uint8_t);
 void oled_clear_column(uint8_t);

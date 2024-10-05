@@ -6,7 +6,7 @@ xmem_init()
 	MCUCR = 0b10000000;
 	SFIOR = (1 << XMM2);
 
-	volatile char* ext_ram = (char*) XMEM_MEM;
+	volatile char* ext_ram = (char*) XMEM_SRAM_MEM;
 	uint16_t ext_ram_size = 0x800;
 	uint16_t write_error = 0; 
 	uint16_t retrival_errors = 0;

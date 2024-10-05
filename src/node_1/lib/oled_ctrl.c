@@ -65,29 +65,50 @@ oled_home()
 	write_command(0xB0);
 	write_command(0x00);
 	write_command(0x10);
-	write_data(0xff);
 }
 
 void
 oled_goto_line(uint8_t line)
 {
-
+	if(line < OLED_LINE_CNT && line >= 0)
+	{
+		write_command(0xB0 + line);
+	}
 }
 
 void
-oled_goto_column(uint8_t line)
+oled_goto_column(uint8_t column)
 {
-
+	write_command(0x00 |  (0x0f & column));
+	write_command(0x10 | ((0xf0 & column) >> 4));
 }
 
 void 
-oled_clear_line(uint8_t)
+oled_clear_line(uint8_t line)
 {
-
+	//check that the line is within the limit
+	if(line < OLED_LINE_CNT && line >= 0)
+	{
+		//Move display "cursor" to the line
+		oled_goto_line(line);
+		
+		//Iterate over display width and clear it
+		for(uint8_t p = 0; p < OLED_WIDTH; p++)
+		{
+			write_data(0x00);
+		}
+	}
+	
 }
 
 void 
-oled_clear_column(uint8_t)
+oled_clear_column(uint8_t column)
 {
-
+	//check if within display
+	if(column < OLED_WIDTH && column >= 0)
+	{
+		oled_goto_column(column);
+		//Clear Column
+		write_data(0x00);
+	}
 }
