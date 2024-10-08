@@ -11,6 +11,9 @@
 #define OLED_WIDTH      128
 #define OLED_LINE_CNT   8
 
+uint8_t cursor_line = 0;
+uint8_t cursor_column = 0;
+
 void oled_init();
 void oled_clear();
 
@@ -26,5 +29,9 @@ void oled_clear_column(uint8_t);
 
 //Print a char to the display
 void oled_print_string(char*, uint8_t);
+
+//Funciton to be used to return the position of the "cursor"
+//For simplicity it will return just the line number
+uint8_t oled_get_cursor();
 
 #endif

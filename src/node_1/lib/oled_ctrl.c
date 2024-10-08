@@ -77,43 +77,41 @@ oled_goto_line(uint8_t line)
 	{
 		write_command(0xB0 + line);
 	}
+
+	cursor_line = line;
 }
 
 void
 oled_goto_column(uint8_t column)
 {
-	write_command(0x00 |  (0x0f & column));
-	write_command(0x10 | ((0xf0 & column) >> 4));
+	if(column < OLED_WIDTH && column >= 0)
+	{
+		write_command(0x00 |  (0x0f & column));
+		write_command(0x10 | ((0xf0 & column) >> 4));
+
+		cursor_column = column;
+	}
 }
 
 void 
 oled_clear_line(uint8_t line)
 {
-	//check that the line is within the limit
-	if(line < OLED_LINE_CNT && line >= 0)
-	{
-		//Move display "cursor" to the line
-		oled_goto_line(line);
+	//Move display "cursor" to the line
+	oled_goto_line(line);
 		
-		//Iterate over display width and clear it
-		for(uint8_t p = 0; p < OLED_WIDTH; p++)
-		{
-			write_data(0x00);
-		}
-	}
-	
+	//Iterate over display width and clear it
+	for(uint8_t p = 0; p < OLED_WIDTH; p++)
+	{
+		write_data(0x00);
+	}	
 }
 
 void 
 oled_clear_column(uint8_t column)
 {
-	//check if within display
-	if(column < OLED_WIDTH && column >= 0)
-	{
-		oled_goto_column(column);
-		//Clear Column
-		write_data(0x00);
-	}
+	oled_goto_column(column);
+	//Clear Column
+	write_data(0x00);
 }
 
 void
@@ -134,4 +132,10 @@ oled_print_string(char* str, uint8_t font_size)
 		write_data(pgm_read_byte(str[*(str + str_itr) - 32][str_itr]));
 		str_itr++;
 	}
+}
+
+uint8_t
+oled_get_cursor()
+{
+	return cursor_line;
 }
