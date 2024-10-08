@@ -128,12 +128,10 @@ void
 oled_print_string(char* str, uint8_t font_size)
 {
 	uint8_t str_itr = 0x00;
-	uint8_t char_ind = 0x00;
-
+	
 	while(str_itr < str_size)
 	{
-		char_ind = (uint8_t) *(str + str_itr) - 32;
-		write_data(pgm_read_byte(str[char_ind][str_itr]));
+		write_data(pgm_read_byte(str[*(str + str_itr) - 32][str_itr]));
 		str_itr++;
 	}
 }
