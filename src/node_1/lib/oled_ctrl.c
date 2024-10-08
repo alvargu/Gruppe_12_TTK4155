@@ -47,6 +47,7 @@ oled_init()
 	
 	write_command(0x20); //Set Memory Addressing Mode back to page mode
 	write_command(0x02); 
+
 }
 
 void
@@ -56,6 +57,8 @@ oled_clear()
 	for(int i = 0; i < 1024; i++){
 		write_data(0x00);
 	}
+
+	oled_home();
 }
 
 //Function used to move the cursor to the top left corner
@@ -110,5 +113,27 @@ oled_clear_column(uint8_t column)
 		oled_goto_column(column);
 		//Clear Column
 		write_data(0x00);
+	}
+}
+
+void
+oled_pos(uint8_t line, uint8_t column)
+{
+	oled_goto_line(line);
+	oled_goto_column(column);
+}
+
+//Function assumes the "cursor" has been placed at string start
+void
+oled_print_string(char* str, uint8_t font_size)
+{
+	uint8_t str_itr = 0x00;
+	uint8_t char_ind = 0x00;
+
+	while(str_itr < str_size)
+	{
+		char_ind = (uint8_t) *(str + str_itr) - 32;
+		write_data(pgm_read_byte(str[char_ind][str_itr]));
+		str_itr++;
 	}
 }
