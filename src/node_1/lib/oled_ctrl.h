@@ -5,14 +5,11 @@
 #include <avr/interrupt.h>
 #include <inttypes.h>
 
-#include "xmem.h"
 #include "fonts.h"
+#include "xmem.h"
 
 #define OLED_WIDTH      128
 #define OLED_LINE_CNT   8
-
-uint8_t cursor_line = 0;
-uint8_t cursor_column = 0;
 
 void oled_init();
 void oled_clear();
