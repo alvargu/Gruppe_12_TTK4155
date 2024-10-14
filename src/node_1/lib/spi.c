@@ -10,13 +10,16 @@ spi_master_init()
 	DDRB = (1 << DDB4) | (1 << DDB5) | (1 << DDB7);
 
 	//Enable and configure SPI as master with clock rate f_clk/16
-	//Additionaly configures SPI to function in Mode 1,1
+	//Additionally configures SPI to function in Mode 1,1
 	SPCR = (1 << SPIE) | (1 << SPE) | (1 << MSTR) | (1 << CPOL) | (1 << CPHA)| (1 << SPR0);
 	
 	//Enable Global Interrupt
 	sei();
 }
 
+
+//UNUSED
+//MAYBE Going to be needed?
 void
 spi_slave_init()
 {
@@ -36,30 +39,30 @@ spi_transmit(char cTx)
 
 	//Wait for transmit to finish
 	while(!(SPSR & (1 << SPIF)))
-	    ;
+	;
 }
 
 uint8_t
 spi_rx()
 {
-    //Wait for SPI to finish transmitting data
+	//Wait for SPI to finish transmitting data
 	while(!(SPSR & (1 << SPIF)))
-		;
+	;
 	
-    //Get and return the received data from SPDR register
+	//Get and return the received data from SPDR register
 	return SPDR;
 }
 
 void
 spi_open_channel()
 {
-    //Set the SS low
-    PORTB &= ~(1 << PB4);
+	//Set the SS low
+	PORTB &= ~(1 << PB4);
 }
 
 void
 spi_close_channel()
 {
-    //Set the SS port high
-    PORTB |= (1 << PB4);
+	//Set the SS port high
+	PORTB |= (1 << PB4);
 }
