@@ -4,12 +4,17 @@ void
 spi_master_init()
 {
 	//SPI IO Registers config
-	DDRB = (1 << DDB5) | (1 << DDB7);
+	//SS	- signal configured as an output (PB4)
+	//MOSI	- signal configured as an output (PB5)
+	//SCK	- signal configured as an output (PB7)
+	DDRB = (1 << DDB4) | (1 << DDB5) | (1 << DDB7);
 
 	//Enable and configure SPI as master with clock rate f_clk/16
 	//Additionaly configures SPI to function in Mode 1,1
-    //! Consider if it is supposed to function with an interrupt
-	SPCR = /*(1 << SPIE) |*/ (1 << SPE) | (1 << MSTR) | (1 << CPOL) | (1 << CPHA)| (1 << SPR0);
+	SPCR = (1 << SPIE) | (1 << SPE) | (1 << MSTR) | (1 << CPOL) | (1 << CPHA)| (1 << SPR0);
+	
+	//Enable Global Interrupt
+	sei();
 }
 
 void
@@ -26,22 +31,27 @@ spi_slave_init()
 void
 spi_transmit(char cTx)
 {
-	//Start Transmision by loading the char into transmit register
+    //Init transmit by setting SS line low
+    PORTB &= ~(1 << PB4);
+
+	//Start transmission by loading the char into transmit register
 	SPDR = cTx;
 
 	//Wait for transmit to finish
 	while(!(SPSR & (1 << SPIF)))
-	;
-}
+	    ;
 
+    //Sync Slave and Master by setting SS high
+    PORTB |= (1 << PB4);
+}
 
 uint8_t
 spi_rx()
 {
-    //Wait for SPI to finish reciving data
+    //Wait for SPI to finish transmitting data
 	while(!(SPSR & (1 << SPIF)))
 		;
 	
-    //Get and return the recived data from SPDR register
+    //Get and return the received data from SPDR register
 	return SPDR;
 }

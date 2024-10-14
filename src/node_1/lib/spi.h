@@ -1,6 +1,8 @@
 #ifndef SPI_H
 #define SPI_H
 
+#include <avr/interrupt.h>
+
 void	spi_master_init();		//Init function of SPI as master
 void	spi_slave_init();		//Init function of SPI as slave
 void	spi_tx(char);			//Transmit char over SPI
