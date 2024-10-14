@@ -31,18 +31,12 @@ spi_slave_init()
 void
 spi_transmit(char cTx)
 {
-    //Init transmit by setting SS line low
-    PORTB &= ~(1 << PB4);
-
 	//Start transmission by loading the char into transmit register
 	SPDR = cTx;
 
 	//Wait for transmit to finish
 	while(!(SPSR & (1 << SPIF)))
 	    ;
-
-    //Sync Slave and Master by setting SS high
-    PORTB |= (1 << PB4);
 }
 
 uint8_t
@@ -54,4 +48,18 @@ spi_rx()
 	
     //Get and return the received data from SPDR register
 	return SPDR;
+}
+
+void
+spi_open_channel()
+{
+    //Set the SS low
+    PORTB &= ~(1 << PB4);
+}
+
+void
+spi_close_channel()
+{
+    //Set the SS port high
+    PORTB |= (1 << PB4);
 }
