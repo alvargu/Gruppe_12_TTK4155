@@ -5,11 +5,30 @@
 #include <avr/interrupt.h>
 #include <inttypes.h>
 
-#define TIMER_VAL	10240
-#define F_CPU		4915200
+#include "fonts.h"
+#include "xmem.h"
+
+#define OLED_WIDTH      128
+#define OLED_LINE_CNT   8
 
 void oled_init();
 void oled_clear();
-void oled_printf(uint8_t*);
+
+//Move OLED "Cursor"
+void oled_home();
+void oled_pos(uint8_t, uint8_t);
+void oled_goto_line(uint8_t);
+void oled_goto_column(uint8_t);
+
+//Clear OLED display
+void oled_clear_line(uint8_t);
+void oled_clear_column(uint8_t);
+
+//Print a char to the display
+void oled_print_string(char*, uint8_t);
+
+//Funciton to be used to return the position of the "cursor"
+//For simplicity it will return just the line number
+uint8_t oled_get_cursor();
 
 #endif
