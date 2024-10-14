@@ -16,7 +16,7 @@ void oled_clear();
 
 //Move OLED "Cursor"
 void oled_home();
-void oled_pos(uint8_t, uint8_t);
+void oled_goto_pos(uint8_t, uint8_t);
 void oled_goto_line(uint8_t);
 void oled_goto_column(uint8_t);
 
@@ -25,7 +25,7 @@ void oled_clear_line(uint8_t);
 void oled_clear_column(uint8_t);
 
 //Print a char to the display
-void oled_print_string(char*, uint8_t);
+void oled_printf(char*, uint8_t);
 
 //Funciton to be used to return the position of the "cursor"
 //For simplicity it will return just the line number

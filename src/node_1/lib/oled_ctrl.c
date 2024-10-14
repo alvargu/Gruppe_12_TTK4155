@@ -118,7 +118,7 @@ oled_clear_column(uint8_t c)
 }
 
 void
-oled_pos(uint8_t l, uint8_t c)
+oled_goto_pos(uint8_t l, uint8_t c)
 {
 	oled_goto_line(l);
 	oled_goto_column(c);
@@ -126,7 +126,7 @@ oled_pos(uint8_t l, uint8_t c)
 
 //Function assumes the "cursor" has been placed at string start
 void
-oled_print_string(char* str, uint8_t font)
+oled_printf(char* str, uint8_t font)
 {
 	uint8_t str_itr = 0x00;
 	
