@@ -4,7 +4,8 @@
 #include <stdint.h>
 
 
-//for now inits to loopback mode only
+//does all initialisation of SPI and MCP can controller
+//(for now inits to loopback mode only)
 void can_init(void);
 
 //can send
