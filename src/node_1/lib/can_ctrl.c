@@ -1,5 +1,6 @@
 #include "can_ctrl.h"
 #include "spi.h"
+#include "mcp2515.h"
 
 #define RESET 				0b11000000
 #define READ 				0b00000011
