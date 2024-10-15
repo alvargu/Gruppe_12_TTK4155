@@ -1,22 +1,21 @@
 #include "can_com.h"
 #include "can_ctrl.h"
+#include "mcp2515.h"
 
-#define XRTSCTRL ((uint8_t) 0x0D)
-#define CANCTRL ((uint8_t) 0x0F)
-#define CNF1 ((uint8_t) 0x2A)
-#define CNF2 ((uint8_t) 0x29)
-#define CNF3 ((uint8_t) 0x28)
 
+#define TXRTSCTRL 0x0Du
+#define FULL_REG_MASK 0xFFu
 
 void can_init(void)
 {
+		spi_master_init();
 		can_ctrl_reset();
 		//Modify registers:
 				//CNF1, CNF2, CNF3
-		can_ctrl_bit_modify(XRTSCTRL, 0b111, 0x0u); //set XRTSCTRL pins to digital mode (unused)
+		can_ctrl_bit_modify(TXRTSCTRL, 0b111, 0x0u); //set TXRTSCTRL pins to digital mode (unused)
 				//Filter registers
 				//Mask registers
 				
-		can_ctrl_bit_modify(CANCTRL, 0xFFu, 0b01000000); //put CAN controller in loopback mode
-		//can_ctrl_bit_modify(CANCTRL, 0xFFu, 0x0u); //put CAN controller in normal mode mode (future)
+		can_ctrl_bit_modify(MCP_CANCTRL, FULL_REG_MASK, MODE_LOOPBACK); //put CAN controller in loopback mode
+		//can_ctrl_bit_modify(CANCTRL, FULL_REG_MASK, MODE_NORMAL); //put CAN controller in normal mode mode (to be uncommented after testing on loopback mode)
 }
