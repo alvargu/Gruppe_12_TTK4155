@@ -32,7 +32,7 @@ spi_slave_init()
 }
 
 void
-spi_transmit(char cTx)
+spi_tx(char cTx)
 {
 	//Start transmission by loading the char into transmit register
 	SPDR = cTx;
