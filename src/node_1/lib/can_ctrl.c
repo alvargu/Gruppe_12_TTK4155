@@ -32,7 +32,7 @@ void can_ctrl_write(uint8_t reg_adress, uint8_t data)
 {
 		spi_open_channel();
 		spi_tx(WRITE);
-		spi_tx(adress);
+		spi_tx(reg_adress);
 		spi_tx(data);
 		spi_close_channel();
 }
