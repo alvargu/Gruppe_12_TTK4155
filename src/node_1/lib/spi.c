@@ -39,7 +39,7 @@ spi_transmit(char cTx)
 
 	//Wait for transmit to finish
 	while(!(SPSR & (1 << SPIF)))
-	;
+	    ;
 }
 
 uint8_t
@@ -47,7 +47,7 @@ spi_rx()
 {
 	//Wait for SPI to finish transmitting data
 	while(!(SPSR & (1 << SPIF)))
-	;
+	    ;
 	
 	//Get and return the received data from SPDR register
 	return SPDR;

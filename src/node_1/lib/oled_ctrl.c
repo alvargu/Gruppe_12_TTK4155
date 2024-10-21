@@ -3,7 +3,6 @@
 uint8_t cursor_line		= 0;
 uint8_t cursor_column	= 0;
 
-
 //Function mask, used to write commands to sram without the need to specify all parameters
 static void
 write_command(uint8_t c)
@@ -54,7 +53,6 @@ oled_init()
 	
 	write_command(0x20); //Set Memory Addressing Mode back to page mode
 	write_command(0x02);
-
 }
 
 void
@@ -65,7 +63,6 @@ oled_clear()
 	for(int i = 0; i < OLED_WIDTH*OLED_LINE_CNT; i++){
 		write_data(0x00);
 	}
-
 
 	//Move the "cursor" back to start position
 	oled_home();
@@ -174,7 +171,6 @@ oled_printf(char* str, uint8_t font)
 		//Increase the string iterator in order to move to next character
 		str_itr++;
 	}
-
 }
 
 //Simple getter function
