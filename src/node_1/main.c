@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "lib/ADC_Driver.h"
+#include "lib/can_com.h"
 
 #define F_CPU 4915200 //Clock Speed
 #include <util/delay.h>
@@ -16,14 +17,17 @@ void main()
 		uart_init(MYUBRR);
 		adc_init();
 
-		//Setup for using external memory space
-		MCUCR |= (0x1 << SRE);
-		SFIOR |= (0x1 << XMM2);
-		printf("\033[2j");
+		can_init();
+		
+		can_message_t msg1 = {4u, 8u, {40u, 5u, 60u, 24u, 12u, 4u, 1u, 254u}};
+		can_message_t msg2 = {45u, 4u, {40u, 58u, 60u, 124u, 12u, 4u, 1u, 254u}};
 
 		while (1)
 		{
-				adc_test();
-				_delay_ms(10);
+				can_transmit(&msg1, 0);
+				_delay_ms(500);
+				can_transmit(&msg2, 0);
+				_delay_ms(500);
+
 		}
 }

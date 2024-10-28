@@ -46,7 +46,7 @@ void can_init(void)
 #endif
 
 #ifndef LOOPBACK_TEST
-		can_ctrl_bit_modify(CANCTRL, FULL_REG_MASK, MODE_NORMAL); //put CAN controller in normal mode mode 
+		can_ctrl_bit_modify(MCP_CANCTRL, FULL_REG_MASK, MODE_NORMAL); //put CAN controller in normal mode mode 
 #endif
 }
 

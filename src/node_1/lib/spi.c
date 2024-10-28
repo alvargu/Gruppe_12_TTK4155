@@ -11,7 +11,7 @@ spi_master_init()
 
 	//Enable and configure SPI as master with clock rate f_clk/16
 	//Additionally configures SPI to function in Mode 1,1
-	SPCR = (1 << SPIE) | (1 << SPE) | (1 << MSTR) | (1 << CPOL) | (1 << CPHA)| (1 << SPR0);
+	SPCR = (1 << SPE) | (1 << MSTR) | (0 << CPOL) | (0 << CPHA)| (1 << SPR0);
 	
 	//Enable Global Interrupt
 	sei();
