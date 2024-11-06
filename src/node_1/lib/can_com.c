@@ -32,21 +32,24 @@ void can_init(void)
 		//Modify registers:
 		can_ctrl_bit_modify(TXRTSCTRL, 0b111, 0x0u); //set TXRTSCTRL pins to digital mode (unused)
 													 
-				//CNF1, CNF2, CNF3 all left at default values for now. These control timing, which will be relevant for Node2.
+				//CNF1, CNF2, CNF3 all left at default values for now. 
+				//These control timing, which will be relevant for Node2.
 				//Filter registers (default setting for now, should allow all messages through)
 				//Mask registers (default setting for now, should allow all messages through)
-				
-		can_ctrl_bit_modify(MCP_CANINTE, 0b11100, 0x0u); //Disable sending interrupt when message is transmitted
 
+		//Disable sending interrupt when message is transmitted	
+		can_ctrl_bit_modify(MCP_CANINTE, 0b11100, 0x0u); 
 
 
 				
 #ifdef LOOPBACK_TEST
-		can_ctrl_bit_modify(MCP_CANCTRL, FULL_REG_MASK, MODE_LOOPBACK); //put CAN controller in loopback mode
+		//put CAN controller in loopback mode
+		can_ctrl_bit_modify(MCP_CANCTRL, FULL_REG_MASK, MODE_LOOPBACK);
 #endif
 
 #ifndef LOOPBACK_TEST
-		can_ctrl_bit_modify(MCP_CANCTRL, FULL_REG_MASK, MODE_NORMAL); //put CAN controller in normal mode mode 
+		//put CAN controller in normal mode mode
+		can_ctrl_bit_modify(MCP_CANCTRL, FULL_REG_MASK, MODE_NORMAL);
 #endif
 }
 
@@ -63,7 +66,8 @@ void can_transmit(const can_message_t* p_message, uint8_t tx_buf)
 		uint8_t id_high_bits = std_id_high_bits(p_message -> id); //gets the 8 high bits of the message id
 		uint8_t id_low_bits = std_id_low_bits(p_message -> id); //gets the 3 low bits + extra info from the message id.
 
-		while ((can_ctr_read_status() >> shift_val) & 0x1u) //Waits until the targeted buffer is ready (TXBnXTRL.TXREQ bit is clear).
+		//Waits until the targeted buffer is ready (TXBnXTRL.TXREQ bit is clear).
+		while ((can_ctr_read_status() >> shift_val) & 0x1u) 
 		{
 				//Do nothing
 		}

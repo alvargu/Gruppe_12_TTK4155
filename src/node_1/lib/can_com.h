@@ -7,7 +7,7 @@ typedef struct
 {
 		uint16_t id; //Standard identifier. Reminder: ID is 11 bits long (0 to 2047)
 		uint8_t data_len; //Number of bytes to be transmitted (between 0 and 8)
-		uint8_t data[8]; //At most 8 bits of data to be transmitted.
+		uint8_t data[8]; //At most 8 bytes of data to be transmitted.
 } can_message_t;
  
 //does all initialisation of SPI and MCP can controller
