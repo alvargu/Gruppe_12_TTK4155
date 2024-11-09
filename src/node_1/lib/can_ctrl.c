@@ -2,6 +2,9 @@
 #include "spi.h"
 #include "mcp2515.h"
 
+#define F_CPU 4915200 //Clock Speed
+#include <util/delay.h>
+
 #define RESET 				0b11000000
 #define READ 				0b00000011
 #define WRITE 				0b00000010
@@ -31,7 +34,7 @@ uint8_t can_ctr_read_status(void)
 void can_ctrl_write(uint8_t reg_adress, uint8_t data)
 {
 		spi_open_channel();
-		spi_tx(WRITE);
+		spi_tx(MCP_WRITE);
 		spi_tx(reg_adress);
 		spi_tx(data);
 		spi_close_channel();
@@ -51,7 +54,8 @@ uint8_t can_ctrl_read(uint8_t reg_adress)
 {
 		uint8_t received;
 		spi_open_channel();
-		spi_tx(READ);
+		spi_tx(MCP_READ);
+		spi_tx(reg_adress);
 		received = spi_rx();
 		spi_close_channel();
 		return received;
@@ -60,6 +64,7 @@ uint8_t can_ctrl_read(uint8_t reg_adress)
 void can_ctrl_reset(void)
 {
 		spi_open_channel();
-		spi_tx(RESET);
+		spi_tx(MCP_RESET);
 		spi_close_channel();
+		_delay_ms(10);
 }

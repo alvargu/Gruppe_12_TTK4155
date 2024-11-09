@@ -1,4 +1,5 @@
 #include "spi.h"
+#include <stdio.h>
 
 void
 spi_master_init()
@@ -7,14 +8,18 @@ spi_master_init()
 	//SS	- signal configured as an output (PB4)
 	//MOSI	- signal configured as an output (PB5)
 	//SCK	- signal configured as an output (PB7)
-	DDRB = (1 << DDB4) | (1 << DDB5) | (1 << DDB7);
-
+	//DDRB = (1 << DDB4) | (1 << DDB5) | (1 << DDB7);
+	DDRB = (1 << PB4) | (1 << PB5) | (1 << PB7);
+	DDRB &= ~(1 << PB6); //MISO on PB6
+ 
 	//Enable and configure SPI as master with clock rate f_clk/16
 	//Additionally configures SPI to function in Mode 1,1
-	SPCR = (1 << SPE) | (1 << MSTR) | (0 << CPOL) | (0 << CPHA)| (1 << SPR0);
+	SPCR = (1 << SPE) | (1 << MSTR) | (1 << CPOL) | (1 << CPHA)| (1 << SPR0);
 	
 	//Enable Global Interrupt
 	sei();
+
+	spi_close_channel();
 }
 
 
@@ -49,6 +54,10 @@ spi_rx()
 	while(!(SPSR & (1 << SPIF)))
 	;
 	
+	char dummy_byte = '~';
+
+	spi_tx(dummy_byte);
+
 	//Get and return the received data from SPDR register
 	return SPDR;
 }
