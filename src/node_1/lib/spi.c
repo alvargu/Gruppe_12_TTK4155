@@ -17,9 +17,6 @@ spi_master_init()
 	sei();
 }
 
-
-//UNUSED
-//MAYBE Going to be needed?
 void
 spi_slave_init()
 {
