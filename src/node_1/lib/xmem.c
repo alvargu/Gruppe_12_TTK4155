@@ -41,13 +41,13 @@ xmem_init()
 void 
 xmem_write(uint16_t mem_loc, uint8_t adrr, uint8_t val)
 {	
-	volatile char* ext_ram = (char*) mem_loc;
-	ext_ram[adrr] = (char*)val;
+	volatile uint8_t* ext_ram = (uint8_t*) mem_loc;
+	ext_ram[adrr] = val;
 }
 
 uint8_t 
 xmem_read(uint16_t mem_loc,uint8_t adrr)
 {
-	volatile char* ext_ram = (char*) mem_loc;
-	return ext_ram[adrr];;
+	volatile uint8_t* ext_ram = (uint8_t*) mem_loc;
+	return ext_ram[adrr];
 }
