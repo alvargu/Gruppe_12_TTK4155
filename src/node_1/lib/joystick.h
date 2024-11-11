@@ -33,4 +33,11 @@ void joystick_get_angle(joystick_angle_t *input_p, const raw_adc_data_t *adc_rea
 //based on the data in adc_readout_p
 joystick_direction_t joystick_get_direction(const raw_adc_data_t*);
 
+//Sends joystick angle to node2 over CAN.
+//angle is transmitted in a single message with two bytes
+//Byte1: x angle
+//Byte2: y angle
+//ID: 10
+void joystick_can_send(void);
+
 #endif
