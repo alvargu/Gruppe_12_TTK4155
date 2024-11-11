@@ -77,7 +77,6 @@ static uint8_t buffer_status_shift_val(uint8_t buffer_number);
 
 void can_transmit(const can_message_t* p_message, uint8_t tx_buf)
 {
-		can_ctrl_request_send(0x1u << tx_buf);
 		uint8_t shift_val = buffer_status_shift_val(tx_buf); //Used to extract buffer ready state
 		uint8_t buffer_offset = 0x10u * tx_buf; //Used to write to the correct buffer
 
@@ -158,7 +157,8 @@ void can_receive(can_message_t* p_message){
 				(p_message -> data[i]) = can_ctrl_read(MCP_RXB0DM + i);
 		}
 
-		can_ctrl_bit_modify(MCP_CANINTF, 0x1u, 0x0); //Allow for new message in RX buffer 0.
+		//can_ctrl_bit_modify(MCP_CANINTF, 0x1u, 0x0); //Allow for new message in RX buffer 0.
+		can_ctrl_write(MCP_CANINTF, 0x0);
 
 }
 

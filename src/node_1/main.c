@@ -44,16 +44,19 @@ void main()
 		can_init();
 
 
-		can_message_t msg1 = {20u, 3u, {40u, 5u, 60u, 24u, 12u, 4u, 1u, 254u}};
+		can_message_t msg1 = {30u, 8u, {40u, 5u, 45u, 24u, 12u, 4u, 1u, 254u}};
 		can_message_t msg2;
 
 		uint8_t rec = 50;
 
 		can_transmit(&msg1, 0);
 		_delay_ms(500);
+		//can_transmit(&msg1, 0);
+		_delay_ms(500);
 		can_receive(&msg2);
 		_delay_ms(500);
-		printf("Received data: %4d\r\n",msg2.data[1]);
+		//can_receive(&msg2);
+		printf("Received data: %4d\r\n",msg2.data[2]);
 		printf("ID of received message: %8d\r\n",msg2.id);
 		printf("Len of received message: %8d\r\n",msg2.data_len);
 
