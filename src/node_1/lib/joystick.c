@@ -3,6 +3,7 @@
 #include "ADC_Driver.h"
 #include "joystick.h"
 #include <stdio.h>
+#include "can_com.h"
 
 #define F_CPU 4915200 //Clock Speed
 #include <util/delay.h>
@@ -93,5 +94,26 @@ joystick_direction_t joystick_get_direction(const raw_adc_data_t *adc_readout_p)
 		}
 
 		return joystick_state;
+}
+
+void joystick_can_send(void)
+{
+		uint8_t x_normalized;
+		uint8_t	y_normalized;
+		joystick_angle_t joyangle;
+		can_message_t message = {10u,2u,{0u,0u}};
+
+		raw_adc_data_t adc_readout;
+		adc_sample(&adc_readout);
+
+		joystick_get_angle(&joyangle, &adc_readout);
+
+		x_normalized = (joyangle.x_angle + 100);
+		y_normalized = (joyangle.y_angle + 100);
+
+		message.data[0] = x_normalized;
+		message.data[1] = y_normalized;
+
+		can_transmit(&message,0);
 }
 
