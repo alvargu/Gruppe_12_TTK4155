@@ -60,11 +60,17 @@ oled_init()
 void
 oled_clear()
 {
+	//Horizontal Addressing mode
+	write_command(0x20);
+	write_command(0x00);
 	//Iterate over entire screen and set it to 0
 	//Results in an empty screen
 	for(int i = 0; i < OLED_WIDTH*OLED_LINE_CNT; i++){
 		write_data(0x00);
 	}
+
+	write_command(0x20); //Set Memory Addressing Mode back to page mode
+	write_command(0x02);
 
 
 	//Move the "cursor" back to start position
@@ -84,6 +90,7 @@ oled_home()
 void
 oled_goto_line(uint8_t line)
 {
+	
 	//check if the line is within the screen
 	//its needed so we dont get wrapbacks
 	if(line < OLED_LINE_CNT && line >= 0)
