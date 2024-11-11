@@ -2,13 +2,14 @@
 #define ENCODER_H
 
 // Include libraries needed.
-#include <sam.h>
-#include <stdio.h>
-#include <stdlib.h>
+#include "sam.h"
+#include <stdint.h>
 #include "time.h"
 
+static volatile int32_t encoder_pos_val;
 
 void encoder_init(void);
-uint16_t encoder_pos(void);
+uint8_t encoder_get_pos(void);
+void encoder_pos_rst(void);
 
 #endif
