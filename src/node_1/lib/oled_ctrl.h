@@ -11,21 +11,22 @@
 #define OLED_WIDTH      128
 #define OLED_LINE_CNT   8
 
+//Init function as well as clear screen function
 void oled_init();
 void oled_clear();
 
-//Move OLED "Cursor"
+//Functions used to move OLED "Cursor"
 void oled_home();
-void oled_pos(uint8_t, uint8_t);
+void oled_goto_pos(uint8_t, uint8_t);
 void oled_goto_line(uint8_t);
 void oled_goto_column(uint8_t);
 
-//Clear OLED display
+//Clear parts of OLED display
 void oled_clear_line(uint8_t);
 void oled_clear_column(uint8_t);
 
 //Print a char to the display
-void oled_print_string(char*, uint8_t);
+void oled_printf(char*, uint8_t);
 
 //Funciton to be used to return the position of the "cursor"
 //For simplicity it will return just the line number

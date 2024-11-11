@@ -4,7 +4,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "lib/ADC_Driver.h"
+#include "lib/can_com.h"
+#include "lib/spi.h"
+#include "lib/can_ctrl.h"
+#include "lib/mcp2515.h"
 #include "lib/joystick.h"
+
 
 #define F_CPU 4915200 //Clock Speed
 #include <util/delay.h>
@@ -18,19 +23,23 @@ void main()
 		xmem_init();
 		adc_init();
 		joystick_init_calibration();
+    can_init();
 
-		//Clear screen:
-		printf("%c%c%c%c",0x1B,0x5B,0x32,0x4A);
+		printf("%c%c%c%c",0x1B,0x5B,0x32,0x4A); //clear screen
+	
+		can_message_t msg1 = {30u, 8u, {40u, 5u, 45u, 24u, 12u, 4u, 1u, 254u}};
+		can_message_t msg2;
 
-		joystick_angle_t current_angle = {0, 0};
-		raw_adc_data_t adc_readout = {0u, 0u, 0u, 0u};
-		
-		while (1)
-		{
-				printf("\r");
-				adc_sample(&adc_readout);
-				joystick_get_angle(&current_angle, &adc_readout);
+		uint8_t rec = 50;
 
-				printf("X angle: %4d | Y angle: %4d", current_angle.x_angle, current_angle.y_angle);
-		}
-}
+		can_transmit(&msg1, 0);
+		_delay_ms(500);
+		_delay_ms(500);
+		can_receive(&msg2);
+		_delay_ms(500);
+		printf("Received data: %4d\r\n",msg2.data[2]);
+		printf("ID of received message: %8d\r\n",msg2.id);
+		printf("Len of received message: %8d\r\n",msg2.data_len);
+
+
+		while (1);
