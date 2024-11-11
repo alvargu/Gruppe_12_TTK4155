@@ -4,7 +4,7 @@
 #include "spi.h"
 #include <stdio.h>
 
-#define LOOPBACK_TEST //undefine when not testing in loopback mode
+//#define LOOPBACK_TEST //undefine when not testing in loopback mode
 
 #define TXRTSCTRL 0x0Du
 #define FULL_REG_MASK 0xFFu
@@ -31,6 +31,13 @@
 #define MCP_RXB0DM 0x66u
 
 
+//Bit timing:
+
+#define BAUD_RATE_PRESCALE 0x3u
+#define BIT_TIME_LENGTH 0x1u
+#define PROPAGATION_SEGMENT 0x1u
+#define PHASE_SEGMENT_1 0x6u
+#define PHASE_SEGMENT_2 0x5u
 
 void can_init(void)
 {
@@ -44,7 +51,19 @@ void can_init(void)
 													 
 		//CNF1, CNF2, CNF3 all left at default values for now. 
 		//These control timing, which will be relevant for Node2.
-				
+		//
+
+		//CAN bit timing (for node 2):
+		can_ctrl_write(MCP_CNF1, BAUD_RATE_PRESCALE);
+
+		uint8_t cnf2_values = (BIT_TIME_LENGTH << 7) | (PHASE_SEGMENT_1) << 3 | (PROPAGATION_SEGMENT);
+
+		can_ctrl_write(MCP_CNF2, cnf2_values);
+
+		can_ctrl_write(MCP_CNF3, PHASE_SEGMENT_2);
+
+
+		//Disable interrupts
 		can_ctrl_write(MCP_CANINTE, 0x0u);
 														 
 		//Receive any message on RX reg 0.
@@ -53,7 +72,9 @@ void can_init(void)
 		//Receive only Extended ID messages on RX reg 1 
 		//(i.e. allow no messages)
 		can_ctrl_write(MCP_RXB1CTRL, 0b01000000); 
-		can_ctrl_bit_modify(MCP_CANINTF, 0x1u, 0x0); //Allow for new message in RX buffer 0.
+
+		//Allow for new message in RX buffer 0.
+		can_ctrl_bit_modify(MCP_CANINTF, 0x1u, 0x0); 
 													 
 		//Disable sending interrupt when message is transmitted	
 		can_ctrl_bit_modify(MCP_CANINTE, 0b11100, 0x0u); 
@@ -66,7 +87,7 @@ void can_init(void)
 #ifndef LOOPBACK_TEST
 		//put CAN controller in normal mode mode
 		//Might need to be replaced with can_ctrl_write();
-		can_ctrl_bit_modify(MCP_CANCTRL, FULL_REG_MASK, MODE_NORMAL);
+		can_ctrl_write(MCP_CANCTRL, MODE_NORMAL);
 #endif
 }
 
