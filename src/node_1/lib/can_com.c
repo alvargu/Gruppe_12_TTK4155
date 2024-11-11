@@ -161,7 +161,7 @@ static uint8_t buffer_status_shift_val(uint8_t buffer_number)
 //Always reads from buffer 0
 void can_receive(can_message_t* p_message){
 		//interrupt on reception not implemented for now.
-		while ( can_ctr_read_status() & 0x1u != 1) //wait for a message in the receive buffer
+		while ( (can_ctr_read_status() & 0x1u) != 1) //wait for a message in the receive buffer
 		{
 				//do nothing
 		}
