@@ -4,6 +4,7 @@
 #include "joystick.h"
 #include <stdio.h>
 #include "can_com.h"
+#include <avr/io.h>
 
 #define F_CPU 4915200 //Clock Speed
 #include <util/delay.h>
@@ -11,6 +12,7 @@
 static raw_adc_data_t calibration_data = {0u, 0u, 0u, 0u}; //Stores the calibration data that the other functions use
 
 //Initialises joystick (runs calibration)
+//Also sets up Pin D4 to detect button press.
 void joystick_init_calibration(void)
 {
 		raw_adc_data_t adc_readout = {0u, 0u, 0u, 0u};
@@ -19,7 +21,7 @@ void joystick_init_calibration(void)
 		uint16_t y_joystick_sum = 0u;
 
 		printf("\r");
-		printf("Starting calibration\n\r");
+		printf("Starting joystick calibration\n\r");
 
 		for (int counter = 0; counter < 50; counter++)
 		{
@@ -33,6 +35,10 @@ void joystick_init_calibration(void)
 
 		calibration_data.joystick_x = (uint8_t) (x_joystick_sum / 50u);
 		calibration_data.joystick_y = (uint8_t) (y_joystick_sum / 50u);
+
+		//Button press pin:
+		DDRD &= ~(0x1 << DDD4); //Set Pin D4 as input
+		PORTD |= (0x1 << PD4); //Enable pull-up on Pin D4
 }
 
 //Calculates the calibrated angle (in percent) for a given joystick readout and calibration value.
