@@ -35,34 +35,76 @@ void main()
 		oled_init();
 		can_init();
 
+		//Menu to be displayed on OLED
 		menu_t game_menu = 
-		{ 6u, //length
-		  2u, //active item
+		{ 9u, //length
+		  6u, //active item
 		  {
-				  "SETTINGS",
-				  "PLAY GAME",
-				  "HIGH SCORES",
-				  "HISTORY",
-				  "BRUH",
-				  "TEST"
+				  "|^--BOTTOM--^ |",
+				  "| SECRET MENU |",
+				  "| DEV OPTIONS |",
+				  "|   HISTORY   |",
+				  "|    INFO     |",
+				  "| HIGH SCORE  |",
+				  "|  PLAY GAME  |",
+				  "|  SETTINGS   |",
+				  "|  v--TOP--v  |"
 		  }
 		};
 
 		oled_ui_draw_screen(&game_menu);
 
+		uint8_t selection = 199;
 
-		raw_adc_data_t adc_readout;
-		joystick_direction_t direction;
-
-		
 		while (1)
 		{
-				adc_sample(&adc_readout);
-				direction = joystick_get_direction(&adc_readout);
+				selection = oled_ui_handler(&game_menu);
 
-				oled_ui_update_active(&game_menu, direction);
-				oled_ui_draw_screen(&game_menu);
-				_delay_ms(100);
+				if (selection == 6)
+				{
+						oled_clear();
+						oled_goto_pos(3,0);
+						oled_printf("STARTING GAME", FONT_MEDIUM);
+						oled_goto_pos(6,0);
+						oled_printf("GOOD LUCK :)", FONT_MEDIUM);
+						break;
+				}
+				else if(selection == 1)
+				{
+						oled_clear();
+						oled_goto_pos(3,0);
+						oled_printf("secret menu :D", FONT_MEDIUM);
+				}
+				else if (selection != 199)
+				{
+								oled_clear();
+								oled_goto_pos(2,0);
+								oled_printf("YOU HAVE SELECTED:", FONT_MEDIUM);
+								oled_goto_pos(5,0);
+								oled_printf(game_menu.menu_item[selection], FONT_MEDIUM);
+								_delay_ms(1500);
+				}
+		_delay_ms(50);
 		}
-		
+
+		_delay_ms(2500);
+		oled_clear();
+		oled_goto_pos(4,0);
+		oled_printf("   LOADING", FONT_MEDIUM);
+
+		_delay_ms(600);
+		oled_printf(".", FONT_MEDIUM);
+		_delay_ms(600);
+		oled_printf(".", FONT_MEDIUM);
+		_delay_ms(600);
+		oled_printf(".", FONT_MEDIUM);
+		_delay_ms(600);
+		oled_printf(".", FONT_MEDIUM);
+
+		_delay_ms(1500);
+		oled_clear();
+		oled_goto_pos(4,0);
+		oled_printf("  GAME RUNNING!!", FONT_MEDIUM);
+		while (1); //idle at end of prog
 }
+
