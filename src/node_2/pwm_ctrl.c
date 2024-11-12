@@ -18,7 +18,7 @@ pwm_init()
 	PWM -> PWM_CH_NUM[1].PWM_CMR	|= PWM_CMR_CPRE_CLKB			//Connect Channel 1 to CLK B
 					|  PWM_CMR_CPOL;			//Invert PWM output meaning duty cycle is high
 	PWM -> PWM_CH_NUM[1].PWM_CPRD = PWM_MS/PWM_FRQ;				//Asign Period Value (~3_280)
-	PWM -> PWM_CH_NUM[1].PWM_CDTY = PWM_CENTER;				//Centers the servo
+	PWM -> PWM_CH_NUM[1].PWM_CDTY = PWM_MIN;				//Centers the servo
 																							
 	PWM -> PWM_ENA		= PWM_ENA_CHID1;				//Enable PWM on channel 1
 }
