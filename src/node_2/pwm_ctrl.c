@@ -62,5 +62,5 @@ uint16_t
 pwm_scale(uint16_t x_val)
 {
 	uint16_t max_val = PWM_MAX - PWM_MIN;
-	return CAN_MSG_RANGE - (x_val*max_val/CAN_MSG_RANGE) + PWM_MIN;
+	return JOYSTICK_VAL_RANGE - (x_val*max_val/JOYSTICK_VAL_RANGE) + PWM_MIN;
 }
