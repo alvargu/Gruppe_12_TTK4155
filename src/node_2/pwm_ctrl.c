@@ -3,66 +3,64 @@
 void
 pwm_init()
 {
-		PMC -> PMC_PCER1 |= PMC_PCER1_PID36;
+	PMC -> PMC_PCER1	|= PMC_PCER1_PID36;				//Enable Peripheral in PMC
 	
-	//PIOB -> PIO_PER		|= PIO_PB13;			//Enable pin PB13 as output
-												//PWM is going to output on said pin
-	PIOB -> PIO_ABSR	|= PIO_PB13;
-	PIOB -> PIO_PDR		|= PIO_PB13;
+	PIOB -> PIO_ABSR	|= PIO_PB13;					//Set Pin PB13 to be controlled by PWM
+	PIOB -> PIO_PDR		|= PIO_PB13;					//Disable control of the pin by PIO
 	
-												//Clock Config
-	PWM -> PWM_CLK		|= PWM_CLK_DIVB(100);	//Enable CLK Divider B
-												//Assumed that is is used for PWMH
-	
-	PWM -> PWM_CLK		|= PWM_CLK_PREB(5);		//Configure Pre-scaler as MCK/32
-												//Later on divide it by value of the prescaler
-												//meaning that the final freq is MCK/32/100
-														
-	PWM -> PWM_SCM		 = PWM_SCM_SYNC1		//Configure Channel 1 as synchronous
-						|  PWM_SCM_UPDM_MODE0;	//Manual control of update channels and update registers
-												//Now its possible to use UPD registers instead of direct registers
+										//Clock Config
+	PWM -> PWM_CLK		|= PWM_CLK_DIVB(1);				//Enable CLK Divider B
+	PWM -> PWM_CLK		|= PWM_CLK_PREB(0b1001);			//Configure DivB as MCK/512
+												
+	PWM -> PWM_SCM		|= PWM_SCM_SYNC0				//Configure Channel 1 as non synchronous
+				|  PWM_SCM_UPDM_MODE0;				//Manual control of update channels and update registers
 																	
-	PWM -> PWM_CH_NUM[1].PWM_CMR = PWM_CMR_CPRE_CLKB;
-	PWM -> PWM_CH_NUM[1].PWM_CPRD = 2625;
-	PWM -> PWM_CH_NUM[1].PWM_CDTY = 1312;
+	PWM -> PWM_CH_NUM[1].PWM_CMR	|= PWM_CMR_CPRE_CLKB			//Connect Channel 1 to CLK B
+					|  PWM_CMR_CPOL;			//Invert PWM output meaning duty cycle is high
+	PWM -> PWM_CH_NUM[1].PWM_CPRD = PWM_MS/PWM_FRQ;				//Asign Period Value (~3_280)
+	PWM -> PWM_CH_NUM[1].PWM_CDTY = PWM_CENTER;				//Centers the servo
 																							
-	PWM -> PWM_ENA		= PWM_ENA_CHID1;		//Enable PWM on channel 1
+	PWM -> PWM_ENA		= PWM_ENA_CHID1;				//Enable PWM on channel 1
 }
 
+//Check if the input value is within bounds and if so load it to the register
 void
-pwm_udc(uint16_t dc_val)
-{
-	//Get val of period an multiply it by percentage
-	uint16_t got_val = 10;
-	uint16_t val = got_val*dc_val/100;
-	if(val > PWM_MIN && val < PWM_MAX){
-		PWM -> PWM_CH_NUM[3].PWM_CDTYUPD = dc_val;
+pwm_update_duty_cycle(uint16_t dc_val)
+{	
+	if(dc_val <= PWM_MAX && dc_val >= PWM_MIN)
+	{
+		PWM -> PWM_CH_NUM[1].PWM_CDTYUPD		= dc_val;		
+	} 
+	else if(dc_val >= PWM_MAX)
+	{
+		PWM -> PWM_CH_NUM[1].PWM_CDTYUPD		= PWM_MAX;
 	}
+	else if(dc_val <= PWM_MIN){
+		PWM -> PWM_CH_NUM[1].PWM_CDTYUPD		= PWM_MIN;
+			
+	}
+	PWM -> PWM_SCUC					       |= PWM_SCUC_UPDULOCK;	//Main "command" used to load the update registers to main PWM registers
 }
 
 void
-pwm_upv(uint16_t per_val)
+pwm_update_period_value(uint16_t per_val)
 {
-	PWM -> PWM_CH_NUM[3].PWM_CPRDUPD	 = per_val;
+	PWM -> PWM_CH_NUM[1].PWM_CPRDUPD		= per_val;
+	PWM -> PWM_SCUC						   |= PWM_SCUC_UPDULOCK;
 }
 
 void
-pwm_udt(uint16_t dead_time_val)
+pwm_update_dead_time(uint16_t dead_time_val)
 {
-	PWM -> PWM_CH_NUM[3].PWM_DTUPD	     = dead_time_val;
+	PWM -> PWM_CH_NUM[1].PWM_DTUPD			= dead_time_val;
+	PWM -> PWM_SCUC						   |= PWM_SCUC_UPDULOCK;
 }
 
-void
-pwm_apply_timings()
+//Scale the input value to one within bounds
+//Its dependent on the fact that x_val is always in range of 0-200
+uint16_t
+pwm_scale(uint16_t x_val)
 {
-	PWM -> PWM_SCUC		|= PWM_SCUC_UPDULOCK;
-}
-
-void
-default_values()
-{
-	pwm_upv(10000);			//Max Value
-	pwm_udc(200);			//Range 90 - 210
-	pwm_udt(0);				//No idea what it does for now
-	pwm_apply_timings();	//Apply changes
+	uint16_t max_val = PWM_MAX - PWM_MIN;
+	return CAN_MSG_RANGE - (x_val*max_val/CAN_MSG_RANGE) + PWM_MIN;
 }
