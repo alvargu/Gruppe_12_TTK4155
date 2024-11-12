@@ -87,24 +87,28 @@ void main()
 		_delay_ms(50);
 		}
 
-		_delay_ms(2500);
+		_delay_ms(1500);
 		oled_clear();
 		oled_goto_pos(4,0);
 		oled_printf("   LOADING", FONT_MEDIUM);
 
-		_delay_ms(600);
+		_delay_ms(200);
 		oled_printf(".", FONT_MEDIUM);
-		_delay_ms(600);
+		_delay_ms(200);
 		oled_printf(".", FONT_MEDIUM);
-		_delay_ms(600);
+		_delay_ms(200);
 		oled_printf(".", FONT_MEDIUM);
-		_delay_ms(600);
+		_delay_ms(200);
 		oled_printf(".", FONT_MEDIUM);
 
-		_delay_ms(1500);
+		_delay_ms(500);
 		oled_clear();
 		oled_goto_pos(4,0);
 		oled_printf("  GAME RUNNING!!", FONT_MEDIUM);
-		while (1); //idle at end of prog
+
+		while (1)
+		{
+				joystick_can_send();
+		}
 }
 
