@@ -40,7 +40,7 @@ void solenoid_punch(bool punch) {
 	//	bounce_state = 0; // Reset
 	//}
 
-	//replace if with else if
+	//replace if with else if when adding part over
      if ((punch == 1) && (bounce_state == 0)) {
 		solenoid_on(); // ON
 		bounce_state = 1; // Lock
