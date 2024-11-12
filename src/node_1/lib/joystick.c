@@ -104,21 +104,35 @@ joystick_direction_t joystick_get_direction(const raw_adc_data_t *adc_readout_p)
 
 void joystick_can_send(void)
 {
-		uint8_t x_normalized;
-		uint8_t	y_normalized;
-		joystick_angle_t joyangle;
+		uint16_t x_normalized_sum = 0;
+		uint16_t y_normalized_sum = 0;
+
+		uint8_t x_normed_averaged;
+		uint8_t y_normed_averaged;
+		
 		can_message_t message = {10u,2u,{0u,0u}};
-
 		raw_adc_data_t adc_readout;
-		adc_sample(&adc_readout);
+		joystick_angle_t joyangle;
 
-		joystick_get_angle(&joyangle, &adc_readout);
+		uint8_t i;
+		for (i=0;i<=100;i++)
+		{
+				adc_sample(&adc_readout);
 
-		x_normalized = (joyangle.x_angle + 100);
-		y_normalized = (joyangle.y_angle + 100);
+				joystick_get_angle(&joyangle, &adc_readout);
 
-		message.data[0] = x_normalized;
-		message.data[1] = y_normalized;
+				x_normalized_sum += (joyangle.x_angle + 100);
+				y_normalized_sum += (joyangle.y_angle + 100);
+		}
+		
+		x_normed_averaged = (uint8_t) (x_normalized_sum / i);
+		y_normed_averaged = (uint8_t) (y_normalized_sum / i);
+
+		printf("x normed average: %d\n\r", x_normed_averaged);
+
+
+		message.data[0] = x_normed_averaged;
+		message.data[1] = y_normed_averaged;
 
 		can_transmit(&message,0);
 }
