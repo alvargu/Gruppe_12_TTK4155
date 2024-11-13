@@ -35,6 +35,8 @@ void main()
 		oled_init();
 		can_init();
 
+		can_message_t msg_received;
+
 		//Menu to be displayed on OLED
 		menu_t game_menu = 
 		{ 9u, //length
@@ -54,9 +56,12 @@ void main()
 
 		oled_ui_draw_screen(&game_menu);
 
-		uint8_t selection = 199;
+		uint8_t selection = 199u;
 
-		while (1)
+		uint8_t in_main_menu = 1u;
+		uint8_t curr_score = 10;
+
+		while (in_main_menu)
 		{
 				selection = oled_ui_handler(&game_menu);
 
@@ -67,7 +72,7 @@ void main()
 						oled_printf("STARTING GAME", FONT_MEDIUM);
 						oled_goto_pos(6,0);
 						oled_printf("GOOD LUCK :)", FONT_MEDIUM);
-						break;
+						in_main_menu = 0;
 				}
 				else if(selection == 1)
 				{
@@ -109,6 +114,22 @@ void main()
 		while (1)
 		{
 				joystick_can_send();
+
+				if (can_receive(&msg_received))
+				{
+						switch (msg_received.id)
+						{
+								case 11:
+										printf("score dropped by one\n\r");
+										curr_score--;
+										printf("current score: %d\n\r", curr_score);
+										break;
+								default:
+										;
+						}
+				}
+
+				
 		}
 }
 
