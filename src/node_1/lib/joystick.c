@@ -4,6 +4,7 @@
 #include "joystick.h"
 #include <stdio.h>
 #include "can_com.h"
+#include <avr/io.h>
 
 #define F_CPU 4915200 //Clock Speed
 #include <util/delay.h>
@@ -11,6 +12,7 @@
 static raw_adc_data_t calibration_data = {0u, 0u, 0u, 0u}; //Stores the calibration data that the other functions use
 
 //Initialises joystick (runs calibration)
+//Also sets up Pin D4 to detect button press.
 void joystick_init_calibration(void)
 {
 		raw_adc_data_t adc_readout = {0u, 0u, 0u, 0u};
@@ -19,9 +21,11 @@ void joystick_init_calibration(void)
 		uint16_t y_joystick_sum = 0u;
 
 		printf("\r");
-		printf("Starting calibration\n\r");
+		printf("Starting joystick calibration\n\r");
 
-		for (int counter = 0; counter < 50; counter++)
+		uint8_t counter;
+
+		for (counter = 0; counter < 250; counter++)
 		{
 				_delay_ms(1); //If no delay, code runs faster than ADC can update
 				
@@ -31,8 +35,15 @@ void joystick_init_calibration(void)
 				y_joystick_sum += adc_readout.joystick_y;
 		}
 
-		calibration_data.joystick_x = (uint8_t) (x_joystick_sum / 50u);
-		calibration_data.joystick_y = (uint8_t) (y_joystick_sum / 50u);
+		calibration_data.joystick_x = (uint8_t) (x_joystick_sum / counter);
+		calibration_data.joystick_y = (uint8_t) (y_joystick_sum / counter);
+
+		printf("x calibration value: %d\n\r", calibration_data.joystick_x);
+		printf("y calibration value: %d\n\r", calibration_data.joystick_y);
+
+		//Button press pin:
+		DDRD &= ~(0x1 << DDD4); //Set Pin D4 as input
+		PORTD |= (0x1 << PD4); //Enable pull-up on Pin D4
 }
 
 //Calculates the calibrated angle (in percent) for a given joystick readout and calibration value.
@@ -98,21 +109,35 @@ joystick_direction_t joystick_get_direction(const raw_adc_data_t *adc_readout_p)
 
 void joystick_can_send(void)
 {
-		uint8_t x_normalized;
-		uint8_t	y_normalized;
-		joystick_angle_t joyangle;
+		uint16_t x_normalized_sum = 0;
+		uint16_t y_normalized_sum = 0;
+
+		uint8_t x_normed_averaged;
+		uint8_t y_normed_averaged;
+		
 		can_message_t message = {10u,2u,{0u,0u}};
-
 		raw_adc_data_t adc_readout;
-		adc_sample(&adc_readout);
+		joystick_angle_t joyangle;
 
-		joystick_get_angle(&joyangle, &adc_readout);
+		uint8_t i;
+		for (i=0;i<=150;i++)
+		{
+				adc_sample(&adc_readout);
 
-		x_normalized = (joyangle.x_angle + 100);
-		y_normalized = (joyangle.y_angle + 100);
+				joystick_get_angle(&joyangle, &adc_readout);
 
-		message.data[0] = x_normalized;
-		message.data[1] = y_normalized;
+				x_normalized_sum += (joyangle.x_angle + 100);
+				y_normalized_sum += (joyangle.y_angle + 100);
+		}
+		
+		x_normed_averaged = (uint8_t) (x_normalized_sum / i);
+		y_normed_averaged = (uint8_t) (y_normalized_sum / i);
+
+		//printf("x normed average: %d\n\r", x_normed_averaged);
+
+
+		message.data[0] = x_normed_averaged;
+		message.data[1] = y_normed_averaged;
 
 		can_transmit(&message,0);
 }

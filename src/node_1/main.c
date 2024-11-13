@@ -9,6 +9,8 @@
 #include "lib/can_ctrl.h"
 #include "lib/mcp2515.h"
 #include "lib/joystick.h"
+#include "lib/oled_ctrl.h"
+#include "lib/oled_ui.h"
 
 
 #define F_CPU 4915200 //Clock Speed
@@ -17,6 +19,12 @@
 #define BAUD 9600
 #define MYUBRR F_CPU/16/BAUD-1
 
+
+static int x;
+
+static void func(){
+}
+
 void main()
 {
 		printf("%c%c%c%c",0x1B,0x5B,0x32,0x4A); //clear screen
@@ -24,17 +32,83 @@ void main()
 		xmem_init();
 		adc_init();
 		joystick_init_calibration();
+		oled_init();
 		can_init();
 
+		//Menu to be displayed on OLED
+		menu_t game_menu = 
+		{ 9u, //length
+		  6u, //active item
+		  {
+				  "|^--BOTTOM--^ |",
+				  "| SECRET MENU |",
+				  "| DEV OPTIONS |",
+				  "|   HISTORY   |",
+				  "|    INFO     |",
+				  "| HIGH SCORE  |",
+				  "|  PLAY GAME  |",
+				  "|  SETTINGS   |",
+				  "|  v--TOP--v  |"
+		  }
+		};
 
-		can_message_t msg_send = {15u, 8u, {40u, 5u, 45u, 24u, 12u, 4u, 1u, 254u}};
-		can_message_t msg1 = {0u, 1u, {0u}};
+		oled_ui_draw_screen(&game_menu);
 
-		printf("waiting to transmit message\n\r");
-		can_transmit(&msg_send, 0);
-		printf("message transmitted\n\r");
+		uint8_t selection = 199;
 
-		while (1){
+		while (1)
+		{
+				selection = oled_ui_handler(&game_menu);
+
+				if (selection == 6)
+				{
+						oled_clear();
+						oled_goto_pos(3,0);
+						oled_printf("STARTING GAME", FONT_MEDIUM);
+						oled_goto_pos(6,0);
+						oled_printf("GOOD LUCK :)", FONT_MEDIUM);
+						break;
+				}
+				else if(selection == 1)
+				{
+						oled_clear();
+						oled_goto_pos(3,0);
+						oled_printf("secret menu :D", FONT_MEDIUM);
+				}
+				else if (selection != 199)
+				{
+								oled_clear();
+								oled_goto_pos(2,0);
+								oled_printf("YOU HAVE SELECTED:", FONT_MEDIUM);
+								oled_goto_pos(5,0);
+								oled_printf(game_menu.menu_item[selection], FONT_MEDIUM);
+								_delay_ms(1500);
+				}
+		_delay_ms(50);
+		}
+
+		_delay_ms(500);
+		oled_clear();
+		oled_goto_pos(4,0);
+		oled_printf("   LOADING", FONT_MEDIUM);
+
+		_delay_ms(50);
+		oled_printf(".", FONT_MEDIUM);
+		_delay_ms(100);
+		oled_printf(".", FONT_MEDIUM);
+		_delay_ms(20);
+		oled_printf(".", FONT_MEDIUM);
+		_delay_ms(150);
+		oled_printf(".", FONT_MEDIUM);
+
+		_delay_ms(200);
+		oled_clear();
+		oled_goto_pos(4,0);
+		oled_printf("  GAME RUNNING!!", FONT_MEDIUM);
+
+		while (1)
+		{
 				joystick_can_send();
 		}
 }
+
