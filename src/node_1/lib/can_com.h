@@ -19,5 +19,5 @@ void can_init(void);
 void can_transmit(const can_message_t* p_message, uint8_t tx_buf /*for now just use 0 for this param */);
 
 //Always reads from buffer 0
-void can_receive(can_message_t* p_message);
+uint8_t can_receive(can_message_t* p_message);
 #endif
