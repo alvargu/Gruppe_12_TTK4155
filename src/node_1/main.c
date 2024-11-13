@@ -87,21 +87,21 @@ void main()
 		_delay_ms(50);
 		}
 
-		_delay_ms(1500);
+		_delay_ms(500);
 		oled_clear();
 		oled_goto_pos(4,0);
 		oled_printf("   LOADING", FONT_MEDIUM);
 
-		_delay_ms(200);
+		_delay_ms(50);
 		oled_printf(".", FONT_MEDIUM);
-		_delay_ms(200);
+		_delay_ms(100);
 		oled_printf(".", FONT_MEDIUM);
-		_delay_ms(200);
+		_delay_ms(20);
 		oled_printf(".", FONT_MEDIUM);
-		_delay_ms(200);
+		_delay_ms(150);
 		oled_printf(".", FONT_MEDIUM);
 
-		_delay_ms(500);
+		_delay_ms(200);
 		oled_clear();
 		oled_goto_pos(4,0);
 		oled_printf("  GAME RUNNING!!", FONT_MEDIUM);
