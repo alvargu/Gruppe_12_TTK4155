@@ -23,6 +23,7 @@ main(void)
 	can_init(bit_timing, 0);
 	
 	CanMsg recive_msg;
+	CanMsg send_msg;
 
 	printf("Game Started!\n\r");
     while(1) 
@@ -33,7 +34,11 @@ main(void)
 		}
 		pwm_update_duty_cycle(pwm_scale(recive_msg.byte[0]));
 		if(is_goal()){
-			printf("GOAL!!!\n\r");	
+			printf("GOAL!!!\n\r");
+			send_msg.id = 11;
+			send_msg.length = 1;
+			send_msg.byte[0] = 0xFF;	
+			can_tx(send_msg);
 		}
     }
 }
