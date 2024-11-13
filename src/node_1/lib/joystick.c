@@ -23,7 +23,9 @@ void joystick_init_calibration(void)
 		printf("\r");
 		printf("Starting joystick calibration\n\r");
 
-		for (int counter = 0; counter < 50; counter++)
+		uint8_t counter;
+
+		for (counter = 0; counter < 250; counter++)
 		{
 				_delay_ms(1); //If no delay, code runs faster than ADC can update
 				
@@ -33,8 +35,11 @@ void joystick_init_calibration(void)
 				y_joystick_sum += adc_readout.joystick_y;
 		}
 
-		calibration_data.joystick_x = (uint8_t) (x_joystick_sum / 50u);
-		calibration_data.joystick_y = (uint8_t) (y_joystick_sum / 50u);
+		calibration_data.joystick_x = (uint8_t) (x_joystick_sum / counter);
+		calibration_data.joystick_y = (uint8_t) (y_joystick_sum / counter);
+
+		printf("x calibration value: %d\n\r", calibration_data.joystick_x);
+		printf("y calibration value: %d\n\r", calibration_data.joystick_y);
 
 		//Button press pin:
 		DDRD &= ~(0x1 << DDD4); //Set Pin D4 as input
@@ -115,7 +120,7 @@ void joystick_can_send(void)
 		joystick_angle_t joyangle;
 
 		uint8_t i;
-		for (i=0;i<=100;i++)
+		for (i=0;i<=150;i++)
 		{
 				adc_sample(&adc_readout);
 
@@ -128,7 +133,7 @@ void joystick_can_send(void)
 		x_normed_averaged = (uint8_t) (x_normalized_sum / i);
 		y_normed_averaged = (uint8_t) (y_normalized_sum / i);
 
-		printf("x normed average: %d\n\r", x_normed_averaged);
+		//printf("x normed average: %d\n\r", x_normed_averaged);
 
 
 		message.data[0] = x_normed_averaged;
