@@ -9,16 +9,16 @@ bool bounce_state = 0;
 
 
 // Initalization of solenoid enabling use of signal pin for solenoid
-void solenoid_init(void) {
-     // Enable power to PIO Port C via PMC
-     PMC ->PMC_PCER0 |= PMC_PCER0_PID13;
+void solenoid_init() {
+    // Enable power to PIO Port C via PMC
+    PMC ->PMC_PCER0 |= PMC_PCER0_PID13;
 
-     // Enable PIO control
-     PIOC->PIO_PER |= _SOLENOID_PIN;
-     // Set PIO to Output Enabled Mode
-	PIOC->PIO_OER |= _SOLENOID_PIN;
+    // Enable PIO control
+    PIOC->PIO_PER |= PIO_PC18;
+    // Set PIO to Output Enabled Mode
+	PIOC->PIO_OER |= PIO_PC18;
 
-	solenoid_off();
+	solenoid_off();	//Clear Pin and make sure its set to LOW 
 }
 
 
@@ -35,23 +35,20 @@ void solenoid_off(void) {
 // Used for timing of reset 
 bool solenoid_extention_time_passed(void)
 {
-     return ((time_now() - start_timer_solenoid) > SOLENOID_BOUNCE_DURATION);
+    return ((time_now() - start_timer_solenoid) > SOLENOID_BOUNCE_DURATION);
 }
 
 void solenoid_punch(bool punch) {
-     // unsure if this part is needed
-     //if ((punch == 0) && (bounce_state == 0)) {
-	//	solenoid_off(); // OFF
-	//	bounce_state = 0; // Reset
-	//}
-
-	//replace if with else if when adding part over
-     if ((punch == 1) && (bounce_state == 0)) {
+    if ((punch == 1) && (bounce_state == 0)) {
 		solenoid_on(); // ON
 		bounce_state = 1; // Lock
 		start_timer_solenoid = time_now(); // Start timer
 	}
-	else if ((bounce_state == 1) && solenoid_extention_time_passed() {
+	// Reset timing for solenoid
+	if ((bounce_state == 1) && solenoid_lock_time_passed()) {
+		bounce_state = 0;
+	}
+	else if ((bounce_state == 1) && solenoid_bounce_time_passed()) {
 		solenoid_off(); // OFF
 	}
 }

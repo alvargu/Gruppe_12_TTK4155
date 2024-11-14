@@ -1,17 +1,9 @@
 
 #include "encoder.h"
 
-// PC25 = ChA (D4)
-// PC26 = ChB (D5)
-#define _ENCODER_A_PIN PIO_PC25
-#define _ENCODER_B_PIN PIO_PC26
-
-// Define max step size for the motor box enclosure (Measured experimentally +-20)
-#define _ENCODER_STEP_MAX 1385 
-
 // value used to store current encoder position
 volatile int32_t encoder_pos_val = 0;
-
+volatile uint8_t channel_b_state = 0;
 void encoder_init(void)
 {
      // Activate power to TC0
@@ -38,9 +30,9 @@ void encoder_init(void)
 uint8_t encoder_get_pos(void)
 {
 	// Calculate the position as a percentage of _ENCODER_STEP_MAX
-	int8_t encoder_position_percent = (int8_t)((encoder_pos_val * 100) / _ENCODER_STEP_MAX);
-
-	return encoder_position_percent;
+	// int8_t encoder_position_percent = (int8_t)((encoder_pos_val * 100) / _ENCODER_STEP_MAX);
+	// return encoder_position_percent;
+	return encoder_pos_val;
 }
 }
 
@@ -52,20 +44,13 @@ void encoder_pos_rst(void)
 
 void PIOC_Handler(void) {
 	// Check if interrupt is from Encoder Channel A
-	if ((PIOC->PIO_ISR & _ENCODER_A_PIN) == _ENCODER_A_PIN) {
-		// Read the states of encoder channels A and B
-		uint8_t encoder_channel_a = (PIOC->PIO_PDSR & _ENCODER_A_PIN) ? 1 : 0; // Read current state of Channel A
-		uint8_t encoder_channel_b = (PIOC->PIO_PDSR & _ENCODER_B_PIN) ? 1 : 0; // Read current state of Channel B
-
-		// Compare the states of A and B
-		// If neither condition is met, it will ignore
-		if (encoder_channel_a == 1 &&  encoder_channel_b == 0) 
-          {
-			encoder_pos_val++;
-		}
-		else if (encoder_channel_a == 1 &&  encoder_channel_b == 1) 
-          {
-			encoder_pos_val--;
+	if (PIOC->PIO_ISR & _ENCODER_A_PIN) {
+		// Read the state of encoder channel B
+		channel_b_state = (PIOC -> PIO_PDSR & _ENCODER_B_PIN) ? 1 : 0;
+		if(channel_b_state == 0){
+			encoder_steps--;
+		}else if(channel_b_state == 1){
+			encoder_steps++;
 		}
 
 		// Clear pending interrupt
