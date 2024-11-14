@@ -19,23 +19,22 @@
 #define BAUD 9600
 #define MYUBRR F_CPU/16/BAUD-1
 
-
-static int x;
-
-static void func(){
-}
-
 void main()
 {
 		printf("%c%c%c%c",0x1B,0x5B,0x32,0x4A); //clear screen
+
+		//Inits that don't take much time:
 		uart_init(MYUBRR);
 		xmem_init();
 		adc_init();
-		joystick_init_calibration();
 		oled_init();
 		can_init();
 
+		//Used for receiving messages from node2
 		can_message_t msg_received;
+
+		//Used for handshake, then whatever messages we might want to send
+		can_message_t msg_send = {100u, 1u, {0xff, 0u, 0u, 0u, 0u, 0u, 0u, 0u}};
 
 		//Menu to be displayed on OLED
 		menu_t game_menu = 
@@ -54,12 +53,55 @@ void main()
 		  }
 		};
 
+
+		oled_clear();
+		oled_goto_pos(3,20);
+		oled_printf("CALIBRATING", FONT_MEDIUM);
+		oled_goto_pos(4,20);
+		oled_printf("SYSTEM", FONT_MEDIUM);
+		oled_goto_pos(6,20);
+		oled_printf("PLEASE WAIT", FONT_MEDIUM);
+
+		//This takes some time
+		joystick_init_calibration();
+
+
+		//Handshake stare of game with node2:
+		bool node_2_handshake = 0;
+		while (!(node_2_handshake))
+		{
+				can_transmit(&msg_send, 0);
+
+				if (can_receive(&msg_received))
+				{
+						switch (msg_received.id)
+						{
+								case 100:
+										node_2_handshake = 1;
+										break;
+								default:
+										;
+						}
+				}
+		}
+
+		oled_clear();
+		oled_goto_pos(4,20);
+		oled_printf("CALIBRATION", FONT_MEDIUM);
+		oled_goto_pos(5,20);
+		oled_printf("COMPLETE", FONT_MEDIUM);
+		_delay_ms(500);
+
+		oled_clear();
 		oled_ui_draw_screen(&game_menu);
 
+		//Note: check for selection returns
+		//199 if no selection has been made
 		uint8_t selection = 199u;
 
 		uint8_t in_main_menu = 1u;
-		uint8_t curr_score = 10;
+		uint8_t curr_score = 15;
+		char score_string[3];
 
 		while (in_main_menu)
 		{
@@ -67,11 +109,6 @@ void main()
 
 				if (selection == 6)
 				{
-						oled_clear();
-						oled_goto_pos(3,0);
-						oled_printf("STARTING GAME", FONT_MEDIUM);
-						oled_goto_pos(6,0);
-						oled_printf("GOOD LUCK :)", FONT_MEDIUM);
 						in_main_menu = 0;
 				}
 				else if(selection == 1)
@@ -94,42 +131,45 @@ void main()
 
 		_delay_ms(500);
 		oled_clear();
-		oled_goto_pos(4,0);
-		oled_printf("   LOADING", FONT_MEDIUM);
-
-		_delay_ms(50);
-		oled_printf(".", FONT_MEDIUM);
-		_delay_ms(100);
-		oled_printf(".", FONT_MEDIUM);
-		_delay_ms(20);
-		oled_printf(".", FONT_MEDIUM);
-		_delay_ms(150);
-		oled_printf(".", FONT_MEDIUM);
-
-		_delay_ms(200);
+		oled_goto_pos(3,0);
+		oled_printf("STARTING GAME", FONT_MEDIUM);
+		oled_goto_pos(6,0);
+		oled_printf("GOOD LUCK :)", FONT_MEDIUM);
 		oled_clear();
-		oled_goto_pos(4,0);
-		oled_printf("  GAME RUNNING!!", FONT_MEDIUM);
+		oled_goto_pos(6,0);
+		oled_printf("GAME RUNNING!!", FONT_MEDIUM);
 
-		while (1)
+		while (curr_score > 0) //main event loop
 		{
 				joystick_can_send();
+
 
 				if (can_receive(&msg_received))
 				{
 						switch (msg_received.id)
 						{
 								case 11:
-										printf("score dropped by one\n\r");
 										curr_score--;
-										printf("current score: %d\n\r", curr_score);
 										break;
 								default:
 										;
 						}
 				}
+				//Convert score to string for
+				//displaying on OLED
+				itoa(curr_score, score_string, 10); 
+				score_string[3] = '\0';
 
-				
+				oled_clear_line(4);
+				oled_goto_pos(4, 10);
+				oled_printf("Score is:  ", FONT_MEDIUM);
+				oled_printf(score_string, FONT_MEDIUM);
 		}
+
+		oled_clear();
+		oled_goto_pos(4, 10);
+		oled_printf("GAME OVER :(", FONT_MEDIUM);
+
+		while (1); //end of program
 }
 
