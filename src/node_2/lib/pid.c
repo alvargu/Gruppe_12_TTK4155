@@ -1,15 +1,6 @@
 
 #include "pid.h"
 
-// Define 
-typedef struct {
-	int8_t kp;
-	int8_t ki;
-	int8_t kd;
-	int16_t integral_value;
-	int8_t error_factor;
-} PID;
-
 // Instantiate pid struct for global values
 PID pid;
 
