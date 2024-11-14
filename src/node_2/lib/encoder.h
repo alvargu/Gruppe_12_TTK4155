@@ -6,7 +6,6 @@
 #include <stdint.h>
 #include "time.h"
 
-static volatile int32_t encoder_pos_val;
 
 void encoder_init(void);
 uint8_t encoder_get_pos(void);

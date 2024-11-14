@@ -1,7 +1,9 @@
 
 #include "solenoid.h"
 
-uint64_t start_time_solenoid = 0;
+#define SOLENOID_BOUNCE_DURATION msecs(100);  // 100  [ms]
+
+uint64_t start_timer_solenoid = 0;
 bool bounce_state = 0;
 
 
@@ -18,19 +20,19 @@ void solenoid_init() {
 
 
 void solenoid_on() {
-	// Set pin 45 HIGH
-	PIOC->PIO_SODR |= PIO_PC18;
+	// Set pin 45 LOW for on because it is driving a PNP transistor
+	PIOC->PIO_CODR |= PIO_PC18;
 }
 
 void solenoid_off() {
-	// Set pin 45 LOW
-	PIOC->PIO_CODR |= PIO_PC18;
+	// Set pin 45 HIGH for off because it is driving a PNP transistor
+	PIOC->PIO_SODR |= PIO_PC18;
 }
 
 // Used for timing of reset 
 bool solenoid_extention_time_passed(void)
 {
-     return ((time_now() - start_time_solenoid) > SOLENOID_BOUNCE_DURATION);
+     return ((time_now() - start_timer_solenoid) > SOLENOID_BOUNCE_DURATION);
 }
 
 void solenoid_punch(bool punch) {
@@ -44,7 +46,7 @@ void solenoid_punch(bool punch) {
      if ((punch == 1) && (bounce_state == 0)) {
 		solenoid_on(); // ON
 		bounce_state = 1; // Lock
-		start_time_solenoid = time_now(); // Start timer
+		start_timer_solenoid = time_now(); // Start timer
 	}
 	else if ((bounce_state == 1) && solenoid_extention_time_passed() {
 		solenoid_off(); // OFF
