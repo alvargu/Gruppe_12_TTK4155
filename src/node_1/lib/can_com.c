@@ -168,13 +168,6 @@ uint8_t can_receive(can_message_t* p_message){
 				return 0;
 		}
 						
-		/*		
-		while ( (can_ctr_read_status() & 0x1u) != 1) //wait for a message in the receive buffer
-		{
-				//do nothing
-		}
-		*/
-
 		uint8_t msg_id_high_bits = can_ctrl_read(MCP_RXB0SIDH);
 		uint8_t msg_id_low_bits = can_ctrl_read(MCP_RXB0SIDL);
 
