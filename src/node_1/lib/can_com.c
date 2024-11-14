@@ -159,13 +159,15 @@ static uint8_t buffer_status_shift_val(uint8_t buffer_number)
 }
 
 //Always reads from buffer 0
-void can_receive(can_message_t* p_message){
-		//interrupt on reception not implemented for now.
-		while ( (can_ctr_read_status() & 0x1u) != 1) //wait for a message in the receive buffer
-		{
-				//do nothing
-		}
+uint8_t can_receive(can_message_t* p_message){
 
+		//interrupt on reception not implemented for now.
+
+		if ((can_ctr_read_status() & 0x1u) != 1)
+		{
+				return 0;
+		}
+						
 		uint8_t msg_id_high_bits = can_ctrl_read(MCP_RXB0SIDH);
 		uint8_t msg_id_low_bits = can_ctrl_read(MCP_RXB0SIDL);
 
@@ -180,7 +182,7 @@ void can_receive(can_message_t* p_message){
 
 		//can_ctrl_bit_modify(MCP_CANINTF, 0x1u, 0x0); //Allow for new message in RX buffer 0.
 		can_ctrl_write(MCP_CANINTF, 0x0);
-
+		return p_message -> id;
 }
 
 static uint8_t std_id_high_bits(uint16_t id)

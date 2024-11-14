@@ -9,6 +9,7 @@
 #define F_CPU 4915200 //Clock Speed
 #include <util/delay.h>
 
+
 static raw_adc_data_t calibration_data = {0u, 0u, 0u, 0u}; //Stores the calibration data that the other functions use
 
 //Initialises joystick (runs calibration)
@@ -17,15 +18,17 @@ void joystick_init_calibration(void)
 {
 		raw_adc_data_t adc_readout = {0u, 0u, 0u, 0u};
 
-		uint16_t x_joystick_sum = 0u;
-		uint16_t y_joystick_sum = 0u;
+		uint32_t x_joystick_sum = 0u;
+		uint32_t y_joystick_sum = 0u;
 
 		printf("\r");
 		printf("Starting joystick calibration\n\r");
 
-		uint8_t counter;
+		uint16_t counter;
 
-		for (counter = 0; counter < 250; counter++)
+		//Large number of samples for calibration to avoid
+		//joystick drift on DC motors.
+		for (counter = 0; counter < 4000; counter++)
 		{
 				_delay_ms(1); //If no delay, code runs faster than ADC can update
 				
@@ -107,6 +110,21 @@ joystick_direction_t joystick_get_direction(const raw_adc_data_t *adc_readout_p)
 		return joystick_state;
 }
 
+
+static uint8_t joyangle_normalized_clamp(uint8_t joyangle_normed)
+{
+		//clamp/sanitize the value to avoid problems around
+		//the middle point
+
+		if ((joyangle_normed > 95u) && (joyangle_normed < 105u))
+		{
+				joyangle_normed = 100u;
+		}
+
+		return joyangle_normed;
+}
+
+
 void joystick_can_send(void)
 {
 		uint16_t x_normalized_sum = 0;
@@ -115,7 +133,7 @@ void joystick_can_send(void)
 		uint8_t x_normed_averaged;
 		uint8_t y_normed_averaged;
 		
-		can_message_t message = {10u,2u,{0u,0u}};
+		can_message_t message = {10u,3u,{0u,0u,0u}};
 		raw_adc_data_t adc_readout;
 		joystick_angle_t joyangle;
 
@@ -127,17 +145,24 @@ void joystick_can_send(void)
 				joystick_get_angle(&joyangle, &adc_readout);
 
 				x_normalized_sum += (joyangle.x_angle + 100);
-				y_normalized_sum += (joyangle.y_angle + 100);
+				y_normalized_sum += (joyangle_normalized_clamp(joyangle.y_angle + 100));
 		}
-		
+
 		x_normed_averaged = (uint8_t) (x_normalized_sum / i);
 		y_normed_averaged = (uint8_t) (y_normalized_sum / i);
 
-		//printf("x normed average: %d\n\r", x_normed_averaged);
+		x_normed_averaged = joyangle_normalized_clamp(x_normed_averaged);
+		y_normed_averaged = joyangle_normalized_clamp(y_normed_averaged);
 
+		printf("x normed average: %d | y normed average: %d\n\r", x_normed_averaged, y_normed_averaged);
 
 		message.data[0] = x_normed_averaged;
 		message.data[1] = y_normed_averaged;
+
+		//add button pressed state to message
+		//Button pressed corresponds to "logic low" on pin 4
+		
+		message.data[2] = (uint8_t) (!((PIND >> PD4) & 0x1));
 
 		can_transmit(&message,0);
 }
