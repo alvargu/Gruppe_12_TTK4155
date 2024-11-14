@@ -54,18 +54,18 @@ void PIOC_Handler(void) {
 	// Check if interrupt is from Encoder Channel A
 	if ((PIOC->PIO_ISR & _ENCODER_A_PIN) == _ENCODER_A_PIN) {
 		// Read the states of encoder channels A and B
-		uint8_t encoder_a_state = (PIOC->PIO_PDSR & _ENCODER_A_PIN) ? 1 : 0; // Read current state of Channel A
-		uint8_t encoder_b_state = (PIOC->PIO_PDSR & _ENCODER_B_PIN) ? 1 : 0; // Read current state of Channel B
+		uint8_t encoder_channel_a = (PIOC->PIO_PDSR & _ENCODER_A_PIN) ? 1 : 0; // Read current state of Channel A
+		uint8_t encoder_channel_b = (PIOC->PIO_PDSR & _ENCODER_B_PIN) ? 1 : 0; // Read current state of Channel B
 
 		// Compare the states of A and B
 		// If neither condition is met, it will ignore
-		if (encoder_a_state == 1 &&  encoder_b_state == 0) 
+		if (encoder_channel_a == 1 &&  encoder_channel_b == 0) 
           {
-			encoder_steps++;
+			encoder_pos_val++;
 		}
-		else if (encoder_a_state == 1 &&  encoder_b_state == 1) 
+		else if (encoder_channel_a == 1 &&  encoder_channel_b == 1) 
           {
-			encoder_steps--;
+			encoder_pos_val--;
 		}
 
 		// Clear pending interrupt
