@@ -9,8 +9,8 @@ void pid_init(int8_t kp, int8_t ki, int8_t kd) {
 	pid.kp = kp;
 	pid.ki = ki;
 	pid.kd = kd;
+	pid.e_factor = 0;
 	pid.integral_value = 0;
-	pid.error_factor = 0;
 }
 
 int8_t pid_get_u(int8_t error)

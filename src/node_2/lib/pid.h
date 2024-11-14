@@ -10,8 +10,8 @@ typedef struct {
 	int8_t kp;
 	int8_t ki;
 	int8_t kd;
-	int16_t integral_value;
 	int8_t e_factor;
+	int16_t integral_value;
 } PID;
 
 void pid_init(uint8_t kp, uint8_t ki, uint8_t kd);
