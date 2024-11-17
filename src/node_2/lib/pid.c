@@ -20,41 +20,11 @@ void pid_init(float kp, float ti, float td) {
 
 int16_t pid_get_u(int16_t error)
 {
-	
-	error_sum += error;
-	
-	
-	return pid.kp * error + (pid.ti * error_sum / 128);
-	
-}
-
-
-/*
-int32_t
-p_part(int16_t error)
-{
-	return (pid.kp * error);
-}
-
-int32_t
-i_part(int16_t error)
-{
-	if (time_now() > timing_var_i + TIME_CONSTANT)
+	if(error <= 14 && error >= -14)
 	{
-		timing_var_i = time_now();
-		pid.integral_value = (int16_t)((pid.ti)*(pid.integral_value + error));
-	}
-	return pid.integral_value;
-}
+		error_sum += error;
 
-int32_t 
-d_part(int16_t error)
-{
-	if (time_now() > timing_var_d + TIME_CONSTANT)
-	{
-		timing_var_d = time_now();
-		pid.e_factor = (pid.td*(error - pid.e_factor));
+		return pid.kp * error + (pid.ti * error_sum / 128);		
 	}
-	return pid.e_factor;	
+	//return 0;
 }
-*/

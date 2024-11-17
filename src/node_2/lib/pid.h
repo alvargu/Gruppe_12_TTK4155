@@ -17,7 +17,7 @@ typedef struct {
 	float ti;
 } PID;
 
-void pid_init(float kp, float ti);
+void pid_init(float kp, float ti, float td);
 int16_t pid_get_u(int16_t error);
 
 
